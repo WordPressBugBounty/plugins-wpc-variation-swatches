@@ -1,0 +1,62 @@
+/* Variation */
+
+.wpcvs-variation-settings {
+    margin: 1em 0;
+}
+
+.wpcvs-variation-settings label {
+    display: block;
+}
+
+.wpcvs-variation-wrap {
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #fafafa;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    position: relative;
+}
+
+.wpcvs-variation-wrap:before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background-color: #fafafa;
+    border-width: 1px 0 0 1px;
+    border-style: solid;
+    border-color: #8c8f94;
+    transform: rotate(45deg);
+    position: absolute;
+    top: -6px;
+    left: 15px;
+}
+
+.wpcvs-variation-wrap ul li {
+    display: inline-block !important;
+    padding: 0 !important;
+    margin-right: 15px;
+    margin-bottom: 0;
+}
+
+.wpcvs-variation-wrap .form-field {
+    margin: 0;
+}
+
+ul.wpcvs-selectors li {
+    padding: 5px 0;
+}
+
+ul.wpcvs-selectors li input[type="text"] {
+    width: 100%;
+}
+
+.wpcvs-form-field .select2-container {
+    width: 95%;
+    max-width: 95%;
+}
+
+div.wpcvs-form-field .select2-container {
+    width: 95% !important;
+    max-width: 95% !important;
+}
