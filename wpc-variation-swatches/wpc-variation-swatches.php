@@ -3,21 +3,23 @@
 Plugin Name: WPC Variation Swatches for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Variation Swatches is a beautiful color, image, radio and buttons variation swatches for WooCommerce product attributes.
-Version: 4.2.1
+Version: 4.2.2
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 4.0
-Tested up to: 6.6
+Tested up to: 6.7
 WC requires at least: 3.0
-WC tested up to: 9.2
+WC tested up to: 9.4
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.2.1' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.2.2' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -35,9 +37,6 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 	add_action( 'plugins_loaded', 'wpcvs_init', 11 );
 
 	function wpcvs_init() {
-		// load text-domain
-		load_plugin_textdomain( 'wpc-variation-swatches', false, basename( __DIR__ ) . '/languages/' );
-
 		if ( ! function_exists( 'WC' ) || ! version_compare( WC()->version, '3.0', '>=' ) ) {
 			add_action( 'admin_notices', 'wpcvs_notice_wc' );
 
@@ -169,6 +168,10 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 				}
 
 				function init() {
+					// load text-domain
+					load_plugin_textdomain( 'wpc-variation-swatches', false, basename( WPCVS_DIR ) . '/languages/' );
+
+					// shortcode
 					add_shortcode( 'wpcvs_archive', [ $this, 'shortcode_archive' ] );
 				}
 
@@ -1321,7 +1324,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                 <div class="label">
 									<?php echo esc_html( wc_attribute_label( $attribute_name ) ); ?>
                                 </div>
-                                <div class="select">
+                                <div class="select value">
 									<?php
 									$attr     = 'attribute_' . sanitize_title( $attribute_name );
 									$selected = isset( $_REQUEST[ $attr ] ) ? wc_clean( stripslashes( urldecode( $_REQUEST[ $attr ] ) ) ) : $product->get_variation_default_attribute( $attribute_name );
