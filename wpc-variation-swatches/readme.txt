@@ -4,8 +4,8 @@ Donate link: https://wpclever.net
 Tags: woocommerce, wpc, variations, swatches, variation
 Requires at least: 4.0
 Tested up to: 6.7
-Version: 4.2.2
-Stable tag: 4.2.2
+Version: 4.3.0
+Stable tag: 4.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,7 @@ Visit our [live demo](https://demo.wpclever.net/wpcvs/ "live demo") here to see 
 - Responsive display for both desktop and mobile devices
 - Enable/disable click again to undo the selection on current attribute
 - Enable swatches for shop/ archive page
+- Enable swatches for non-variable products
 - Compatible with other WPC special product types: Smart Bundles, Grouped Product
 - Compatible display when added as Bought Together or Force Sells items
 - Optimized for supporting better display in RTL languages
@@ -76,6 +77,10 @@ Note: Except for 2 default attributes by WooCommerce (size & color), all other c
 4. Go to WP-admin > Products > Attributes to configure for attributes and terms
 
 == Changelog ==
+
+= 4.3.0 =
+* Added: Option to show swatches for non-variable products
+* Updated: Compatible with WP 6.7 & Woo 9.7
 
 = 4.2.2 =
 * Updated: Compatible with WP 6.7 & Woo 9.4

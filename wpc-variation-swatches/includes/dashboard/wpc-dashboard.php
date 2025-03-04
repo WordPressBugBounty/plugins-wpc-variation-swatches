@@ -50,8 +50,11 @@ if ( ! class_exists( 'WPCleverDashboard' ) ) {
                 <div class="card">
                     <h2 class="title">About</h2>
                     <p>
-                        We are a team of passionate developers of plugins for WordPress, whose aspiration is to bring smart utilities and functionalities to life for WordPress users, especially for those on WooCommerce platform. Visit our website:
-                        <a href="https://wpclever.net?utm_source=visit&utm_medium=menu&utm_campaign=wporg" target="_blank">https://wpclever.net</a>
+                        We are a team of passionate developers of plugins for WordPress, whose aspiration is to bring
+                        smart utilities and functionalities to life for WordPress users, especially for those on
+                        WooCommerce platform. Visit our website:
+                        <a href="https://wpclever.net?utm_source=visit&utm_medium=menu&utm_campaign=wporg"
+                           target="_blank">https://wpclever.net</a>
                     </p>
                 </div>
                 <div class="card wpclever_plugins">

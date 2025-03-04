@@ -3,7 +3,7 @@
 Plugin Name: WPC Variation Swatches for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Variation Swatches is a beautiful color, image, radio and buttons variation swatches for WooCommerce product attributes.
-Version: 4.2.2
+Version: 4.3.0
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
@@ -12,14 +12,14 @@ Requires Plugins: woocommerce
 Requires at least: 4.0
 Tested up to: 6.7
 WC requires at least: 3.0
-WC tested up to: 9.4
+WC tested up to: 9.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.2.2' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.0' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -106,6 +106,11 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 						$this,
 						'get_default_attributes'
 					], 199, 2 );
+
+					// non-variable
+					if ( self::get_setting( 'non_variable', 'no' ) === 'yes' ) {
+						add_action( 'woocommerce_before_add_to_cart_form', [ $this, 'non_variable_swatches' ] );
+					}
 
 					// settings page
 					add_action( 'admin_init', [ $this, 'register_settings' ] );
@@ -383,9 +388,12 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             <p>
 								<?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-variation-swatches' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
                                 <br/>
-                                <a href="<?php echo esc_url( WPCVS_REVIEWS ); ?>" target="_blank"><?php esc_html_e( 'Reviews', 'wpc-variation-swatches' ); ?></a> |
-                                <a href="<?php echo esc_url( WPCVS_CHANGELOG ); ?>" target="_blank"><?php esc_html_e( 'Changelog', 'wpc-variation-swatches' ); ?></a> |
-                                <a href="<?php echo esc_url( WPCVS_DISCUSSION ); ?>" target="_blank"><?php esc_html_e( 'Discussion', 'wpc-variation-swatches' ); ?></a>
+                                <a href="<?php echo esc_url( WPCVS_REVIEWS ); ?>"
+                                   target="_blank"><?php esc_html_e( 'Reviews', 'wpc-variation-swatches' ); ?></a> |
+                                <a href="<?php echo esc_url( WPCVS_CHANGELOG ); ?>"
+                                   target="_blank"><?php esc_html_e( 'Changelog', 'wpc-variation-swatches' ); ?></a> |
+                                <a href="<?php echo esc_url( WPCVS_DISCUSSION ); ?>"
+                                   target="_blank"><?php esc_html_e( 'Discussion', 'wpc-variation-swatches' ); ?></a>
                             </p>
                         </div>
 						<?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
@@ -395,13 +403,16 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 						<?php } ?>
                         <div class="wpclever_settings_page_nav">
                             <h2 class="nav-tab-wrapper">
-                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcvs&tab=settings' ) ); ?>" class="<?php echo esc_attr( $active_tab === 'settings' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
+                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcvs&tab=settings' ) ); ?>"
+                                   class="<?php echo esc_attr( $active_tab === 'settings' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
 									<?php esc_html_e( 'Settings', 'wpc-variation-swatches' ); ?>
                                 </a>
-                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcvs&tab=localization' ) ); ?>" class="<?php echo esc_attr( $active_tab === 'localization' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
+                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcvs&tab=localization' ) ); ?>"
+                                   class="<?php echo esc_attr( $active_tab === 'localization' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
 									<?php esc_html_e( 'Localization', 'wpc-variation-swatches' ); ?>
                                 </a>
-                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-kit' ) ); ?>" class="nav-tab">
+                                <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-kit' ) ); ?>"
+                                   class="nav-tab">
 									<?php esc_html_e( 'Essential Kit', 'wpc-variation-swatches' ); ?>
                                 </a>
                             </h2>
@@ -415,6 +426,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 								$style              = self::get_setting( 'style', 'square' );
 								$group              = self::get_setting( 'group', 'yes' );
 								$default_attributes = self::get_setting( 'default_attributes', 'no' );
+								$non_variable       = self::get_setting( 'non_variable', 'no' );
 								$archive_enable     = self::get_setting( 'archive_enable', 'no' );
 								$archive_position   = self::get_setting( 'archive_position', 'before' );
 								$archive_change_url = self::get_setting( 'archive_change_url', 'no' );
@@ -460,7 +472,10 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <option value="tippy" <?php selected( $tooltip_library, 'tippy' ); ?>><?php esc_html_e( 'Tippy.js', 'wpc-variation-swatches' ); ?></option>
                                                         <option value="none" <?php selected( $tooltip_library, 'none' ); ?>><?php esc_html_e( 'None (Disable)', 'wpc-variation-swatches' ); ?></option>
                                                     </select> </label>
-                                                <span class="description">Read more about <a href="https://kushagra.dev/lab/hint/" target="_blank">Hint.css</a> and <a href="https://atomiks.github.io/tippyjs/v6/getting-started/" target="_blank">Tippy.js</a>. Use Tippy.js if you want to show the attribute's name, description, image or color on the tooltip.</span>
+                                                <span class="description">Read more about <a
+                                                            href="https://kushagra.dev/lab/hint/" target="_blank">Hint.css</a> and <a
+                                                            href="https://atomiks.github.io/tippyjs/v6/getting-started/"
+                                                            target="_blank">Tippy.js</a>. Use Tippy.js if you want to show the attribute's name, description, image or color on the tooltip.</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -502,6 +517,16 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <option value="no" <?php selected( $default_attributes, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
                                                     </select> </label>
                                                 <span class="description"><?php esc_html_e( 'Select default attributes automatically if they were not set.', 'wpc-variation-swatches' ); ?></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th><?php esc_html_e( 'Swatches for non-variable products', 'wpc-variation-swatches' ); ?></th>
+                                            <td>
+                                                <label> <select name="wpcvs_settings[non_variable]">
+                                                        <option value="yes" <?php selected( $non_variable, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                        <option value="no" <?php selected( $non_variable, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                    </select> </label>
+                                                <span class="description"><?php esc_html_e( 'Display visible attributes as swatches for non-variable products.', 'wpc-variation-swatches' ); ?></span>
                                             </td>
                                         </tr>
                                         <tr class="heading">
@@ -547,7 +572,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product wrapper selector. Default: %s', 'wpc-variation-swatches' ), '<code>.product.product-type-variable</code>' ); ?></label>
 														<?php $single_product = apply_filters( 'wpcvs_single_product_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[single_product]" value="<?php echo esc_attr( ! empty( $single_product ) ? $single_product : self::get_setting( 'single_product' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[single_product]"
+                                                                   value="<?php echo esc_attr( ! empty( $single_product ) ? $single_product : self::get_setting( 'single_product' ) ); ?>"
 																<?php echo( ! empty( $single_product ) ? 'readonly' : 'placeholder=".product.product-type-variable"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -555,7 +582,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product name selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .product_title</code>' ); ?></label>
 														<?php $single_name = apply_filters( 'wpcvs_single_name_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[single_name]" value="<?php echo esc_attr( ! empty( $single_name ) ? $single_name : self::get_setting( 'single_name' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[single_name]"
+                                                                   value="<?php echo esc_attr( ! empty( $single_name ) ? $single_name : self::get_setting( 'single_name' ) ); ?>"
 																<?php echo( ! empty( $single_name ) ? 'readonly' : 'placeholder=".summary > .product_title"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -563,7 +592,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product price selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .price</code>' ); ?></label>
 														<?php $single_price = apply_filters( 'wpcvs_single_price_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[single_price]" value="<?php echo esc_attr( ! empty( $single_price ) ? $single_price : self::get_setting( 'single_price' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[single_price]"
+                                                                   value="<?php echo esc_attr( ! empty( $single_price ) ? $single_price : self::get_setting( 'single_price' ) ); ?>"
 																<?php echo( ! empty( $single_price ) ? 'readonly' : 'placeholder=".summary > .price"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -571,7 +602,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product short description selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .woocommerce-product-details__short-description</code>' ); ?></label>
 														<?php $single_desc = apply_filters( 'wpcvs_single_desc_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[single_desc]" value="<?php echo esc_attr( ! empty( $single_desc ) ? $single_desc : self::get_setting( 'single_desc' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[single_desc]"
+                                                                   value="<?php echo esc_attr( ! empty( $single_desc ) ? $single_desc : self::get_setting( 'single_desc' ) ); ?>"
 																<?php echo( ! empty( $single_desc ) ? 'readonly' : 'placeholder=".summary > .woocommerce-product-details__short-description"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -609,7 +642,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                             <th><?php esc_html_e( 'Limit', 'wpc-variation-swatches' ); ?></th>
                                             <td>
                                                 <label>
-                                                    <input type="number" min="0" max="500" name="wpcvs_settings[archive_limit]" value="<?php echo esc_attr( $archive_limit ); ?>"/>
+                                                    <input type="number" min="0" max="500"
+                                                           name="wpcvs_settings[archive_limit]"
+                                                           value="<?php echo esc_attr( $archive_limit ); ?>"/>
                                                 </label> <span class="description">
 													<?php esc_html_e( 'Maximum terms of each attribute will be shown on product archive page.', 'wpc-variation-swatches' ); ?>
                                                 </span>
@@ -633,7 +668,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product wrapper selector. Default: %s', 'wpc-variation-swatches' ), '<code>.product</code>' ); ?></label>
 														<?php $archive_product = apply_filters( 'wpcvs_archive_product_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[archive_product]" value="<?php echo esc_attr( ! empty( $archive_product ) ? $archive_product : self::get_setting( 'archive_product' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[archive_product]"
+                                                                   value="<?php echo esc_attr( ! empty( $archive_product ) ? $archive_product : self::get_setting( 'archive_product' ) ); ?>"
 																<?php echo( ! empty( $archive_product ) ? 'readonly' : 'placeholder=".product"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -641,7 +678,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product link selector. Default: %s', 'wpc-variation-swatches' ), '<code>.woocommerce-loop-product__link, .woocommerce-loop-product__title a, a.add_to_cart_button</code>' ); ?></label>
 														<?php $archive_link = apply_filters( 'wpcvs_archive_link_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[archive_link]" value="<?php echo esc_attr( ! empty( $archive_link ) ? $archive_link : self::get_setting( 'archive_link' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[archive_link]"
+                                                                   value="<?php echo esc_attr( ! empty( $archive_link ) ? $archive_link : self::get_setting( 'archive_link' ) ); ?>"
 																<?php echo( ! empty( $archive_link ) ? 'readonly' : 'placeholder=".woocommerce-loop-product__link, .woocommerce-loop-product__title a, a.add_to_cart_button"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -649,7 +688,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product image selector. Default: %s', 'wpc-variation-swatches' ), '<code>.attachment-woocommerce_thumbnail</code>' ); ?></label>
 														<?php $archive_image = apply_filters( 'wpcvs_archive_image_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[archive_image]" value="<?php echo esc_attr( ! empty( $archive_image ) ? $archive_image : self::get_setting( 'archive_image' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[archive_image]"
+                                                                   value="<?php echo esc_attr( ! empty( $archive_image ) ? $archive_image : self::get_setting( 'archive_image' ) ); ?>"
 																<?php echo( ! empty( $archive_image ) ? 'readonly' : 'placeholder=".attachment-woocommerce_thumbnail"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -657,7 +698,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product name selector. Default: %s', 'wpc-variation-swatches' ), '<code>.woocommerce-loop-product__title</code>' ); ?></label>
 														<?php $archive_name = apply_filters( 'wpcvs_archive_name_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[archive_name]" value="<?php echo esc_attr( ! empty( $archive_name ) ? $archive_name : self::get_setting( 'archive_name' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[archive_name]"
+                                                                   value="<?php echo esc_attr( ! empty( $archive_name ) ? $archive_name : self::get_setting( 'archive_name' ) ); ?>"
 																<?php echo( ! empty( $archive_name ) ? 'readonly' : 'placeholder=".woocommerce-loop-product__title"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -665,7 +708,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Product price selector. Default: %s', 'wpc-variation-swatches' ), '<code>.price</code>' ); ?></label>
 														<?php $archive_price = apply_filters( 'wpcvs_archive_price_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[archive_price]" value="<?php echo esc_attr( ! empty( $archive_price ) ? $archive_price : self::get_setting( 'archive_price' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[archive_price]"
+                                                                   value="<?php echo esc_attr( ! empty( $archive_price ) ? $archive_price : self::get_setting( 'archive_price' ) ); ?>"
 																<?php echo( ! empty( $archive_price ) ? 'readonly' : 'placeholder=".price"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -673,7 +718,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Add to cart button selector. Default: %s', 'wpc-variation-swatches' ), '<code>.add_to_cart_button</code>' ); ?></label>
 														<?php $archive_atc = apply_filters( 'wpcvs_archive_atc_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[archive_atc]" value="<?php echo esc_attr( ! empty( $archive_atc ) ? $archive_atc : self::get_setting( 'archive_atc' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[archive_atc]"
+                                                                   value="<?php echo esc_attr( ! empty( $archive_atc ) ? $archive_atc : self::get_setting( 'archive_atc' ) ); ?>"
 																<?php echo( ! empty( $archive_atc ) ? 'readonly' : 'placeholder=".add_to_cart_button"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -681,7 +728,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                         <label><?php printf( /* translators: selector */ esc_html__( 'Add to cart button text selector. Default: %s', 'wpc-variation-swatches' ), '<code>.add_to_cart_button</code>' ); ?></label>
 														<?php $archive_atc_text = apply_filters( 'wpcvs_archive_atc_text_selector', '' ); ?>
                                                         <label>
-                                                            <input type="text" class="text large-text" name="wpcvs_settings[archive_atc_text]" value="<?php echo esc_attr( ! empty( $archive_atc_text ) ? $archive_atc_text : self::get_setting( 'archive_atc_text' ) ); ?>"
+                                                            <input type="text" class="text large-text"
+                                                                   name="wpcvs_settings[archive_atc_text]"
+                                                                   value="<?php echo esc_attr( ! empty( $archive_atc_text ) ? $archive_atc_text : self::get_setting( 'archive_atc_text' ) ); ?>"
 																<?php echo( ! empty( $archive_atc_text ) ? 'readonly' : 'placeholder=".add_to_cart_button"' ); ?>/>
                                                         </label>
                                                     </li>
@@ -708,7 +757,10 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                             <th><?php esc_html_e( 'Add to cart', 'wpc-variation-swatches' ); ?></th>
                                             <td>
                                                 <label>
-                                                    <input type="text" class="regular-text" name="wpcvs_localization[add_to_cart]" value="<?php echo esc_attr( self::localization( 'add_to_cart' ) ); ?>" placeholder="<?php esc_attr_e( 'Add to cart', 'wpc-variation-swatches' ); ?>"/>
+                                                    <input type="text" class="regular-text"
+                                                           name="wpcvs_localization[add_to_cart]"
+                                                           value="<?php echo esc_attr( self::localization( 'add_to_cart' ) ); ?>"
+                                                           placeholder="<?php esc_attr_e( 'Add to cart', 'wpc-variation-swatches' ); ?>"/>
                                                 </label>
                                             </td>
                                         </tr>
@@ -716,7 +768,10 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                             <th><?php esc_html_e( 'Select options', 'wpc-variation-swatches' ); ?></th>
                                             <td>
                                                 <label>
-                                                    <input type="text" class="regular-text" name="wpcvs_localization[select_options]" value="<?php echo esc_attr( self::localization( 'select_options' ) ); ?>" placeholder="<?php esc_attr_e( 'Select options', 'wpc-variation-swatches' ); ?>"/>
+                                                    <input type="text" class="regular-text"
+                                                           name="wpcvs_localization[select_options]"
+                                                           value="<?php echo esc_attr( self::localization( 'select_options' ) ); ?>"
+                                                           placeholder="<?php esc_attr_e( 'Select options', 'wpc-variation-swatches' ); ?>"/>
                                                 </label>
                                             </td>
                                         </tr>
@@ -724,7 +779,10 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                             <th><?php esc_html_e( 'View cart', 'wpc-variation-swatches' ); ?></th>
                                             <td>
                                                 <label>
-                                                    <input type="text" class="regular-text" name="wpcvs_localization[view_cart]" value="<?php echo esc_attr( self::localization( 'view_cart' ) ); ?>" placeholder="<?php esc_attr_e( 'View cart', 'wpc-variation-swatches' ); ?>"/>
+                                                    <input type="text" class="regular-text"
+                                                           name="wpcvs_localization[view_cart]"
+                                                           value="<?php echo esc_attr( self::localization( 'view_cart' ) ); ?>"
+                                                           placeholder="<?php esc_attr_e( 'View cart', 'wpc-variation-swatches' ); ?>"/>
                                                 </label>
                                             </td>
                                         </tr>
@@ -732,16 +790,24 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                             <th><?php esc_html_e( 'More', 'wpc-variation-swatches' ); ?></th>
                                             <td>
                                                 <label>
-                                                    <input type="text" class="regular-text" name="wpcvs_localization[more]" value="<?php echo esc_attr( self::localization( 'more' ) ); ?>" placeholder="<?php /* translators: count */
-													esc_attr_e( '+%d More', 'wpc-variation-swatches' ); ?>"/> </label>
+                                                    <input type="text" class="regular-text"
+                                                           name="wpcvs_localization[more]"
+                                                           value="<?php echo esc_attr( self::localization( 'more' ) ); ?>"
+                                                           placeholder="<?php /* translators: count */
+													       esc_attr_e( '+%d More', 'wpc-variation-swatches' ); ?>"/>
+                                                </label>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th><?php esc_html_e( 'Option none', 'wpc-variation-swatches' ); ?></th>
                                             <td>
                                                 <label>
-                                                    <input type="text" class="regular-text" name="wpcvs_localization[option_none]" value="<?php echo esc_attr( self::localization( 'option_none' ) ); ?>" placeholder="<?php /* translators: attribute name */
-													esc_attr_e( 'Choose %s', 'wpc-variation-swatches' ); ?>"/> </label>
+                                                    <input type="text" class="regular-text"
+                                                           name="wpcvs_localization[option_none]"
+                                                           value="<?php echo esc_attr( self::localization( 'option_none' ) ); ?>"
+                                                           placeholder="<?php /* translators: attribute name */
+													       esc_attr_e( 'Choose %s', 'wpc-variation-swatches' ); ?>"/>
+                                                </label>
                                             </td>
                                         </tr>
                                         <tr class="submit">
@@ -759,13 +825,17 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             </div>
                             <div class="wpclever_settings_page_suggestion_content">
                                 <div>
-                                    To display custom engaging real-time messages on any wished positions, please install
-                                    <a href="https://wordpress.org/plugins/wpc-smart-messages/" target="_blank">WPC Smart Messages</a> plugin. It's free!
+                                    To display custom engaging real-time messages on any wished positions, please
+                                    install
+                                    <a href="https://wordpress.org/plugins/wpc-smart-messages/" target="_blank">WPC
+                                        Smart Messages</a> plugin. It's free!
                                 </div>
                                 <div>
                                     Wanna save your precious time working on variations? Try our brand-new free plugin
-                                    <a href="https://wordpress.org/plugins/wpc-variation-bulk-editor/" target="_blank">WPC Variation Bulk Editor</a> and
-                                    <a href="https://wordpress.org/plugins/wpc-variation-duplicator/" target="_blank">WPC Variation Duplicator</a>.
+                                    <a href="https://wordpress.org/plugins/wpc-variation-bulk-editor/" target="_blank">WPC
+                                        Variation Bulk Editor</a> and
+                                    <a href="https://wordpress.org/plugins/wpc-variation-duplicator/" target="_blank">WPC
+                                        Variation Duplicator</a>.
                                 </div>
                             </div>
                         </div>
@@ -939,10 +1009,13 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             <div id="wpcvs_image_thumbnail" style="float: left; margin-right: 10px;">
                                 <img src="<?php echo esc_url( $image ); ?>" width="60px" height="60px"/></div>
                             <div style="line-height: 60px;">
-                                <input type="hidden" id="wpcvs_image" name="wpcvs_image" value="<?php echo esc_attr( $wpcvs_val ); ?>"/>
-                                <button id="wpcvs_upload_image" type="button" class="wpcvs_upload_image button"><?php esc_html_e( 'Choose image', 'wpc-variation-swatches' ); ?>
+                                <input type="hidden" id="wpcvs_image" name="wpcvs_image"
+                                       value="<?php echo esc_attr( $wpcvs_val ); ?>"/>
+                                <button id="wpcvs_upload_image" type="button"
+                                        class="wpcvs_upload_image button"><?php esc_html_e( 'Choose image', 'wpc-variation-swatches' ); ?>
                                 </button>
-                                <button id="wpcvs_remove_image" type="button" class="wpcvs_remove_image button"><?php esc_html_e( 'Remove image', 'wpc-variation-swatches' ); ?>
+                                <button id="wpcvs_remove_image" type="button"
+                                        class="wpcvs_remove_image button"><?php esc_html_e( 'Remove image', 'wpc-variation-swatches' ); ?>
                                 </button>
                             </div>
 							<?php
@@ -1005,7 +1078,6 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 					$tooltip_position = self::get_setting( 'tooltip_position', 'top' );
 					$tooltip_library  = self::get_setting( 'tooltip_library', 'tippy' );
 					$style            = self::get_setting( 'style', 'square' );
-					$attr_id          = wc_attribute_taxonomy_id_by_name( $attribute );
 					$tooltip_class    = '';
 
 					if ( $tooltip_position !== 'no' ) {
@@ -1025,9 +1097,14 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 						$options    = $attributes[ $attribute ];
 					}
 
-					if ( $attr_id ) {
-						$attr          = wc_get_attribute( $attr_id );
-						$attr_type     = $attr->type ?? 'select';
+					if ( $attr_id = wc_attribute_taxonomy_id_by_name( $attribute ) ) {
+						$attr      = wc_get_attribute( $attr_id );
+						$attr_type = $attr->type ?? 'select';
+
+						if ( ( $attr_type === 'select' ) && ( self::get_setting( 'button_default', 'no' ) === 'yes' ) ) {
+							$attr_type = 'button';
+						}
+
 						$groups        = get_option( 'wpcvs_groups_' . $attr_id, [] );
 						$show_label    = get_option( 'wpcvs_show_label_' . $attr_id, 'no' );
 						$grouped_terms = [];
@@ -1049,10 +1126,6 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 									$grouped_terms['wpcvs_no_group'][] = $term;
 								}
 							}
-						}
-
-						if ( ( $attr_type === 'select' ) && ( self::get_setting( 'button_default', 'no' ) === 'yes' ) ) {
-							$attr_type = 'button';
 						}
 
 						// insert wpcvs_no_group to the last
@@ -1199,7 +1272,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 									}
 
 									do_action( 'wpcvs_term_before', $option );
-									echo apply_filters( 'wpcvs_term_html', '<span class="' . esc_attr( $class ) . '"  ' . $tooltip_content . ' title="' . esc_attr( $option ) . '" data-group="wpcvs_no_group" data-term="' . esc_attr( $option ) . '"><span>' . esc_html( $option ) . '</span></span>', $option, $args );
+									echo apply_filters( 'wpcvs_term_html', '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $option ) . '" data-group="wpcvs_no_group" data-label="' . esc_attr( $option ) . '" data-term="' . esc_attr( $option ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-label">' . esc_html( $option ) . '</span></span></span>', $option, $args );
 									do_action( 'wpcvs_term_after', $option );
 								}
 
@@ -1245,6 +1318,253 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 					}
 
 					return $default_attributes;
+				}
+
+				function non_variable_swatches() {
+					global $product;
+
+					if ( ! $product || ! is_a( $product, 'WC_Product' ) || $product->is_type( 'variable' ) ) {
+						return;
+					}
+
+					if ( $attributes = $product->get_attributes() ) {
+						$tooltip_position = self::get_setting( 'tooltip_position', 'top' );
+						$tooltip_library  = self::get_setting( 'tooltip_library', 'tippy' );
+						$style            = self::get_setting( 'style', 'square' );
+
+						echo '<table class="variations wpcvs-non-variable wpcvs-initialized" cellspacing="0" role="presentation"><tbody>';
+
+						foreach ( $attributes as $attribute ) {
+							if ( ! $attribute->get_visible() ) {
+								continue;
+							}
+
+							$attribute_name = $attribute->get_name();
+							$options        = $attribute->get_options();
+							$tooltip_class  = '';
+							$args           = [
+								'product'   => $product->get_id(),
+								'attribute' => $attribute_name,
+								'options'   => $options,
+								'limit'     => 0,
+								'archive'   => 0,
+								'extra'     => 0
+							];
+
+							$archive = false;
+							$count   = 0;
+							$limit   = 0;
+							$extra   = 0;
+
+							if ( $tooltip_position !== 'no' ) {
+								if ( $tooltip_library === 'hint' ) {
+									$tooltip_class = 'hint-tooltip hint--' . $tooltip_position;
+								}
+
+								if ( $tooltip_library === 'tippy' ) {
+									$tooltip_class = 'wpcvs-tippy-tooltip tippy--' . $tooltip_position;
+								}
+							}
+
+							if ( $attr_id = $attribute->get_id() ) {
+								$attr = wc_get_attribute( $attr_id );
+
+								echo '<tr>';
+								echo '<th class="label"><label for="' . esc_attr( $attr->slug ) . '">' . esc_html( $attr->name ) . '</label></th>';
+								echo '<td class="value">';
+
+								$attr_type = $attr->type ?? 'select';
+
+								if ( ( $attr_type === 'select' ) && ( self::get_setting( 'button_default', 'no' ) === 'yes' ) ) {
+									$attr_type = 'button';
+								}
+
+								$groups        = get_option( 'wpcvs_groups_' . $attr_id, [] );
+								$show_label    = get_option( 'wpcvs_show_label_' . $attr_id, 'no' );
+								$grouped_terms = [];
+								$terms         = wc_get_product_terms(
+									$product->get_id(),
+									$attribute_name,
+									[
+										'fields' => 'all',
+									]
+								);
+
+								if ( ! empty( $terms ) ) {
+									foreach ( $terms as $term ) {
+										$group = get_term_meta( $term->term_id, 'wpcvs_group', true ) ?: 'wpcvs_no_group';
+
+										if ( ( self::get_setting( 'group', 'yes' ) === 'yes' ) && in_array( $group, $groups ) ) {
+											$grouped_terms[ $group ][] = $term;
+										} else {
+											$grouped_terms['wpcvs_no_group'][] = $term;
+										}
+									}
+								}
+
+								// insert wpcvs_no_group to the last
+								if ( apply_filters( 'wpcvs_no_group_first', true ) ) {
+									array_unshift( $groups, 'wpcvs_no_group' );
+								} else {
+									$groups[] = 'wpcvs_no_group';
+								}
+
+								if ( ( $attr_type !== '' ) && ( $attr_type !== 'select' ) ) {
+									do_action( 'wpcvs_terms_above', $args );
+									echo '<div class="' . esc_attr( apply_filters( 'wpcvs_terms_class', 'wpcvs-terms wpcvs-type-' . $attr_type . ' wpcvs-show-label-' . $show_label . ' wpcvs-style-' . $style, $terms, $args ) ) . '" data-attribute="' . esc_attr( $attribute_name ) . '">';
+									do_action( 'wpcvs_terms_before', $args );
+
+									foreach ( $groups as $group ) {
+										if ( ! isset( $grouped_terms[ $group ] ) ) {
+											continue;
+										}
+
+										if ( ! $archive && ( $group !== 'wpcvs_no_group' ) ) {
+											echo '<div class="wpcvs-group" data-group="' . esc_attr( $group ) . '">' . esc_html( $group ) . '</div>';
+										}
+
+										if ( ! empty( $grouped_terms[ $group ] ) ) {
+											foreach ( $grouped_terms[ $group ] as $term ) {
+												$term_html = '';
+
+												switch ( $attr_type ) {
+													case 'button' :
+														if ( ! $limit || ( $count < $limit ) ) {
+															$val     = get_term_meta( $term->term_id, 'wpcvs_button', true ) ?: $term->name;
+															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $val;
+															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
+
+															if ( $tooltip_library === 'tippy' ) {
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+															} elseif ( $tooltip_library === 'hint' ) {
+																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
+															} else {
+																$tooltip_content = '';
+															}
+
+															$term_html = '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $tooltip ) . '" data-group="' . esc_attr( $group ) . '" data-label="' . esc_attr( $term->name ) . '" data-term="' . esc_attr( $term->slug ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-label">' . esc_html( $val ) . '</span></span></span>';
+														}
+
+														break;
+													case 'color':
+														if ( ! $limit || ( $count < $limit ) ) {
+															$val     = get_term_meta( $term->term_id, 'wpcvs_color', true ) ?: '';
+															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
+
+															if ( $tooltip_library === 'tippy' ) {
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--color" ' . ( ! empty( $val ) ? 'style="background-color: ' . esc_attr( $val ) . '"' : '' ) . '>' . esc_html( $val ) . '</span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+															} elseif ( $tooltip_library === 'hint' ) {
+																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
+															} else {
+																$tooltip_content = '';
+															}
+
+															$term_html = '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $tooltip ) . '" data-group="' . esc_attr( $group ) . '" data-label="' . esc_attr( $term->name ) . '" data-term="' . esc_attr( $term->slug ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-color" ' . ( ! empty( $val ) ? 'style="background-color: ' . esc_attr( $val ) . '"' : '' ) . '>' . esc_html( $val ) . '</span>' . ( wc_string_to_bool( $show_label ) ? '<span class="wpcvs-term-label">' . esc_html( $term->name ) . '</span>' : '' ) . '</span></span>';
+														}
+
+														break;
+													case 'image':
+														if ( ! $limit || ( $count < $limit ) ) {
+															$val     = get_term_meta( $term->term_id, 'wpcvs_image', true ) ? wp_get_attachment_thumb_url( get_term_meta( $term->term_id, 'wpcvs_image', true ) ) : wc_placeholder_img_src();
+															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
+
+															if ( $tooltip_library === 'tippy' ) {
+																$val_full        = get_term_meta( $term->term_id, 'wpcvs_image', true ) ? wp_get_attachment_image_url( get_term_meta( $term->term_id, 'wpcvs_image', true ), 'full' ) : wc_placeholder_img_src();
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--image"><img src="' . esc_url( $val_full ) . '" alt="' . esc_attr( $term->name ) . '"/></span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+															} elseif ( $tooltip_library === 'hint' ) {
+																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
+															} else {
+																$tooltip_content = '';
+															}
+
+															$term_html = '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $tooltip ) . '" data-group="' . esc_attr( $group ) . '" data-label="' . esc_attr( $term->name ) . '" data-term="' . esc_attr( $term->slug ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-image"><img src="' . esc_url( $val ) . '" alt="' . esc_attr( $term->name ) . '"/></span>' . ( wc_string_to_bool( $show_label ) ? '<span class="wpcvs-term-label">' . esc_html( $term->name ) . '</span>' : '' ) . '</span></span>';
+														}
+
+														break;
+													case 'radio':
+														$name = uniqid( 'wpcvs_radio_' );
+
+														if ( ! $limit || ( $count < $limit ) ) {
+															$val     = get_term_meta( $term->term_id, 'wpcvs_radio', true ) ?: $term->name;
+															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
+
+															if ( $tooltip_library === 'tippy' ) {
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+															} elseif ( $tooltip_library === 'hint' ) {
+																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
+															} else {
+																$tooltip_content = '';
+															}
+
+															$term_html = '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $tooltip ) . '" data-group="' . esc_attr( $group ) . '" data-label="' . esc_attr( $term->name ) . '" data-term="' . esc_attr( $term->slug ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-radio"><input type="radio" name="' . esc_attr( $name ) . '" value="' . esc_attr( $term->slug ) . '"/></span><span class="wpcvs-term-label">' . esc_html( $val ) . '</span></span></span>';
+														}
+
+														break;
+													default:
+														break;
+												}
+
+												if ( ! empty( $term_html ) ) {
+													do_action( 'wpcvs_term_before', $term );
+													echo apply_filters( 'wpcvs_term_html', $term_html, $term, $args );
+													do_action( 'wpcvs_term_after', $term );
+												}
+
+												$count ++;
+											}
+										}
+									}
+
+									do_action( 'wpcvs_terms_after', $args );
+									echo '</div><!-- /wpcvs-terms -->';
+									do_action( 'wpcvs_terms_below', $args );
+								}
+
+								echo '</td>';
+								echo '</tr>';
+							} else {
+								echo '<tr>';
+								echo '<th class="label"><label for="' . esc_attr( sanitize_title( $attribute_name ) ) . '">' . esc_html( $attribute_name ) . '</label></th>';
+								echo '<td class="value">';
+
+								do_action( 'wpcvs_terms_above', $args );
+								echo '<div class="' . esc_attr( apply_filters( 'wpcvs_terms_class', 'wpcvs-terms wpcvs-type-button wpcvs-style-' . $style, $options, $args ) ) . '" data-attribute="' . esc_attr( wc_sanitize_taxonomy_name( $attribute_name ) ) . '">';
+								do_action( 'wpcvs_terms_before', $args );
+
+								foreach ( $options as $option ) {
+									if ( ! $limit || ( $count < $limit ) ) {
+										$class = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $option, $args );
+
+										if ( $tooltip_library === 'tippy' ) {
+											$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $option ) . '</span></span></span>' ) ) . '"';
+										} elseif ( $tooltip_library === 'hint' ) {
+											$tooltip_content = 'aria-label="' . esc_attr( $option ) . '"';
+										} else {
+											$tooltip_content = '';
+										}
+
+										do_action( 'wpcvs_term_before', $option );
+										echo apply_filters( 'wpcvs_term_html', '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $option ) . '" data-group="wpcvs_no_group" data-label="' . esc_attr( $option ) . '" data-term="' . esc_attr( $option ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-label">' . esc_html( $option ) . '</span></span></span>', $option, $args );
+										do_action( 'wpcvs_term_after', $option );
+									}
+
+									$count ++;
+								}
+
+								do_action( 'wpcvs_terms_after', $args );
+								echo '</div>';
+								do_action( 'wpcvs_terms_below', $args );
+
+								echo '</td>';
+								echo '</tr>';
+							}
+						}
+
+						echo '</tbody></table>';
+					}
 				}
 
 				function term_custom_columns( $columns ) {
