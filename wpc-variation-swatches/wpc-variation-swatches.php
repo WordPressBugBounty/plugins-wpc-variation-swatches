@@ -3,23 +3,23 @@
 Plugin Name: WPC Variation Swatches for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Variation Swatches is a beautiful color, image, radio and buttons variation swatches for WooCommerce product attributes.
-Version: 4.3.0
+Version: 4.3.1
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
 Domain Path: /languages/
 Requires Plugins: woocommerce
 Requires at least: 4.0
-Tested up to: 6.7
+Tested up to: 6.8
 WC requires at least: 3.0
-WC tested up to: 9.7
+WC tested up to: 9.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.0' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.1' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -1151,17 +1151,18 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
 								if ( ! empty( $grouped_terms[ $group ] ) ) {
 									foreach ( $grouped_terms[ $group ] as $term ) {
+										$term_id   = apply_filters( 'wpcvs_term_id', $term->term_id, $term );
 										$term_html = '';
 
 										switch ( $attr_type ) {
 											case 'button' :
 												if ( ! $limit || ( $count < $limit ) ) {
-													$val     = get_term_meta( $term->term_id, 'wpcvs_button', true ) ?: $term->name;
-													$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $val;
+													$val     = get_term_meta( $term_id, 'wpcvs_button', true ) ?: $term->name;
+													$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $val;
 													$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 													if ( $tooltip_library === 'tippy' ) {
-														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 													} elseif ( $tooltip_library === 'hint' ) {
 														$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 													} else {
@@ -1174,12 +1175,12 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 												break;
 											case 'color':
 												if ( ! $limit || ( $count < $limit ) ) {
-													$val     = get_term_meta( $term->term_id, 'wpcvs_color', true ) ?: '';
-													$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+													$val     = get_term_meta( $term_id, 'wpcvs_color', true ) ?: '';
+													$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $term->name;
 													$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 													if ( $tooltip_library === 'tippy' ) {
-														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--color" ' . ( ! empty( $val ) ? 'style="background-color: ' . esc_attr( $val ) . '"' : '' ) . '>' . esc_html( $val ) . '</span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--color" ' . ( ! empty( $val ) ? 'style="background-color: ' . esc_attr( $val ) . '"' : '' ) . '>' . esc_html( $val ) . '</span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 													} elseif ( $tooltip_library === 'hint' ) {
 														$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 													} else {
@@ -1192,13 +1193,13 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 												break;
 											case 'image':
 												if ( ! $limit || ( $count < $limit ) ) {
-													$val     = get_term_meta( $term->term_id, 'wpcvs_image', true ) ? wp_get_attachment_thumb_url( get_term_meta( $term->term_id, 'wpcvs_image', true ) ) : wc_placeholder_img_src();
-													$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+													$val     = get_term_meta( $term_id, 'wpcvs_image', true ) ? wp_get_attachment_thumb_url( get_term_meta( $term_id, 'wpcvs_image', true ) ) : wc_placeholder_img_src();
+													$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $term->name;
 													$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 													if ( $tooltip_library === 'tippy' ) {
-														$val_full        = get_term_meta( $term->term_id, 'wpcvs_image', true ) ? wp_get_attachment_image_url( get_term_meta( $term->term_id, 'wpcvs_image', true ), 'full' ) : wc_placeholder_img_src();
-														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--image"><img src="' . esc_url( $val_full ) . '" alt="' . esc_attr( $term->name ) . '"/></span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+														$val_full        = get_term_meta( $term_id, 'wpcvs_image', true ) ? wp_get_attachment_image_url( get_term_meta( $term_id, 'wpcvs_image', true ), 'full' ) : wc_placeholder_img_src();
+														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--image"><img src="' . esc_url( $val_full ) . '" alt="' . esc_attr( $term->name ) . '"/></span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 													} elseif ( $tooltip_library === 'hint' ) {
 														$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 													} else {
@@ -1213,12 +1214,12 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 												$name = uniqid( 'wpcvs_radio_' );
 
 												if ( ! $limit || ( $count < $limit ) ) {
-													$val     = get_term_meta( $term->term_id, 'wpcvs_radio', true ) ?: $term->name;
-													$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+													$val     = get_term_meta( $term_id, 'wpcvs_radio', true ) ?: $term->name;
+													$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $term->name;
 													$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 													if ( $tooltip_library === 'tippy' ) {
-														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+														$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 													} elseif ( $tooltip_library === 'hint' ) {
 														$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 													} else {
@@ -1320,7 +1321,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 					return $default_attributes;
 				}
 
-				function non_variable_swatches() {
+				function non_variable_swatches( $archive = false ) {
 					global $product;
 
 					if ( ! $product || ! is_a( $product, 'WC_Product' ) || $product->is_type( 'variable' ) ) {
@@ -1351,10 +1352,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 								'extra'     => 0
 							];
 
-							$archive = false;
-							$count   = 0;
-							$limit   = 0;
-							$extra   = 0;
+							$count = 0;
+							$limit = 0;
+							$extra = 0;
 
 							if ( $tooltip_position !== 'no' ) {
 								if ( $tooltip_library === 'hint' ) {
@@ -1369,7 +1369,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 							if ( $attr_id = $attribute->get_id() ) {
 								$attr = wc_get_attribute( $attr_id );
 
-								echo '<tr>';
+								echo '<tr class="' . esc_attr( 'wpcvs-tr wpcvs-tr-' . $attr->slug ) . '">';
 								echo '<th class="label"><label for="' . esc_attr( $attr->slug ) . '">' . esc_html( $attr->name ) . '</label></th>';
 								echo '<td class="value">';
 
@@ -1425,17 +1425,18 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
 										if ( ! empty( $grouped_terms[ $group ] ) ) {
 											foreach ( $grouped_terms[ $group ] as $term ) {
+												$term_id   = apply_filters( 'wpcvs_term_id', $term->term_id, $term );
 												$term_html = '';
 
 												switch ( $attr_type ) {
 													case 'button' :
 														if ( ! $limit || ( $count < $limit ) ) {
-															$val     = get_term_meta( $term->term_id, 'wpcvs_button', true ) ?: $term->name;
-															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $val;
+															$val     = get_term_meta( $term_id, 'wpcvs_button', true ) ?: $term->name;
+															$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $val;
 															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 															if ( $tooltip_library === 'tippy' ) {
-																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 															} elseif ( $tooltip_library === 'hint' ) {
 																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 															} else {
@@ -1448,12 +1449,12 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 														break;
 													case 'color':
 														if ( ! $limit || ( $count < $limit ) ) {
-															$val     = get_term_meta( $term->term_id, 'wpcvs_color', true ) ?: '';
-															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+															$val     = get_term_meta( $term_id, 'wpcvs_color', true ) ?: '';
+															$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $term->name;
 															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 															if ( $tooltip_library === 'tippy' ) {
-																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--color" ' . ( ! empty( $val ) ? 'style="background-color: ' . esc_attr( $val ) . '"' : '' ) . '>' . esc_html( $val ) . '</span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--color" ' . ( ! empty( $val ) ? 'style="background-color: ' . esc_attr( $val ) . '"' : '' ) . '>' . esc_html( $val ) . '</span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 															} elseif ( $tooltip_library === 'hint' ) {
 																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 															} else {
@@ -1466,13 +1467,13 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 														break;
 													case 'image':
 														if ( ! $limit || ( $count < $limit ) ) {
-															$val     = get_term_meta( $term->term_id, 'wpcvs_image', true ) ? wp_get_attachment_thumb_url( get_term_meta( $term->term_id, 'wpcvs_image', true ) ) : wc_placeholder_img_src();
-															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+															$val     = get_term_meta( $term_id, 'wpcvs_image', true ) ? wp_get_attachment_thumb_url( get_term_meta( $term_id, 'wpcvs_image', true ) ) : wc_placeholder_img_src();
+															$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $term->name;
 															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 															if ( $tooltip_library === 'tippy' ) {
-																$val_full        = get_term_meta( $term->term_id, 'wpcvs_image', true ) ? wp_get_attachment_image_url( get_term_meta( $term->term_id, 'wpcvs_image', true ), 'full' ) : wc_placeholder_img_src();
-																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--image"><img src="' . esc_url( $val_full ) . '" alt="' . esc_attr( $term->name ) . '"/></span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+																$val_full        = get_term_meta( $term_id, 'wpcvs_image', true ) ? wp_get_attachment_image_url( get_term_meta( $term_id, 'wpcvs_image', true ), 'full' ) : wc_placeholder_img_src();
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span><span class="wpcvs-tippy-swatches"><span class="wpcvs-tippy-swatches--image"><img src="' . esc_url( $val_full ) . '" alt="' . esc_attr( $term->name ) . '"/></span></span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 															} elseif ( $tooltip_library === 'hint' ) {
 																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 															} else {
@@ -1487,12 +1488,12 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 														$name = uniqid( 'wpcvs_radio_' );
 
 														if ( ! $limit || ( $count < $limit ) ) {
-															$val     = get_term_meta( $term->term_id, 'wpcvs_radio', true ) ?: $term->name;
-															$tooltip = get_term_meta( $term->term_id, 'wpcvs_tooltip', true ) ?: $term->name;
+															$val     = get_term_meta( $term_id, 'wpcvs_radio', true ) ?: $term->name;
+															$tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true ) ?: $term->name;
 															$class   = apply_filters( 'wpcvs_term_class', 'wpcvs-term ' . $tooltip_class . ' ' . ( $extra ? 'extra' : '' ), $term, $args );
 
 															if ( $tooltip_library === 'tippy' ) {
-																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term->term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
+																$tooltip_content = 'data-tippy-content="' . esc_attr( htmlentities( '<span class="wpcvs-tippy wpcvs-tippy-' . esc_attr( $term_id ) . '"><span class="wpcvs-tippy-inner"><span class="wpcvs-tippy-title">' . esc_html( $tooltip ) . '</span>' . ( ! empty( $term->description ) ? '<span class="wpcvs-tippy-desc">' . esc_html( $term->description ) . '</span>' : '' ) . '</span></span>' ) ) . '"';
 															} elseif ( $tooltip_library === 'hint' ) {
 																$tooltip_content = 'aria-label="' . esc_attr( $tooltip ) . '"';
 															} else {
@@ -1526,7 +1527,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 								echo '</td>';
 								echo '</tr>';
 							} else {
-								echo '<tr>';
+								echo '<tr class="' . esc_attr( 'wpcvs-tr wpcvs-tr-' . sanitize_title( $attribute_name ) ) . '">';
 								echo '<th class="label"><label for="' . esc_attr( sanitize_title( $attribute_name ) ) . '">' . esc_html( $attribute_name ) . '</label></th>';
 								echo '<td class="value">';
 
