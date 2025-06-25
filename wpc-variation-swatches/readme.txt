@@ -4,8 +4,8 @@ Donate link: https://wpclever.net
 Tags: woocommerce, wpc, variations, swatches, variation
 Requires at least: 4.0
 Tested up to: 6.8
-Version: 4.3.1
-Stable tag: 4.3.1
+Version: 4.3.2
+Stable tag: 4.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,10 @@ Note: Except for 2 default attributes by WooCommerce (size & color), all other c
 4. Go to WP-admin > Products > Attributes to configure for attributes and terms
 
 == Changelog ==
+
+= 4.3.2 =
+* Fixed: Minor CSS/JS issues in the backend
+* Updated: Compatible with WP 6.8 & Woo 9.9
 
 = 4.3.1 =
 * Updated: Optimized the code
