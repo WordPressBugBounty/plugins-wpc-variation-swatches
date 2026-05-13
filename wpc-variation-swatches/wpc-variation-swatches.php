@@ -3,7 +3,7 @@
 Plugin Name: WPC Variation Swatches for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Variation Swatches is a beautiful color, image, radio and buttons variation swatches for WooCommerce product attributes.
-Version: 4.3.5
+Version: 4.3.6
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
@@ -12,14 +12,14 @@ Requires Plugins: woocommerce
 Requires at least: 4.0
 Tested up to: 6.9
 WC requires at least: 3.0
-WC tested up to: 10.6
+WC tested up to: 10.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.5' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.6' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -27,12 +27,14 @@ defined( 'ABSPATH' ) || exit;
 ! defined( 'WPCVS_REVIEWS' ) && define( 'WPCVS_REVIEWS', 'https://wordpress.org/support/plugin/wpc-variation-swatches/reviews/' );
 ! defined( 'WPCVS_CHANGELOG' ) && define( 'WPCVS_CHANGELOG', 'https://wordpress.org/plugins/wpc-variation-swatches/#developers' );
 ! defined( 'WPCVS_DISCUSSION' ) && define( 'WPCVS_DISCUSSION', 'https://wordpress.org/support/plugin/wpc-variation-swatches' );
-! defined( 'WPC_URI' ) && define( 'WPC_URI', WPCVS_URI );
 
-include 'includes/log/wpc-log.php';
-include 'includes/dashboard/wpc-dashboard.php';
-include 'includes/kit/wpc-kit.php';
-include 'includes/hpos.php';
+// WPC Core
+require_once __DIR__ . '/includes/wpc-core/wpc-core.php';
+wpc_core_register( [
+        'file'    => __FILE__,
+        'version' => WPCVS_VERSION,
+        'prefix'  => 'wpcvs',
+] );
 
 if ( ! function_exists( 'wpcvs_init' ) ) {
     add_action( 'plugins_loaded', 'wpcvs_init', 11 );
@@ -857,7 +859,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                                     submit_button( '', 'primary', 'submit', false );
 
                                                     if ( function_exists( 'wpc_last_saved' ) ) {
-                                                        wpc_last_saved( get_option( 'wpcvs_localization', [] ) );;
+                                                        wpc_last_saved( get_option( 'wpcvs_localization', [] ) );
                                                     }
                                                     ?>
                                                 </div>
