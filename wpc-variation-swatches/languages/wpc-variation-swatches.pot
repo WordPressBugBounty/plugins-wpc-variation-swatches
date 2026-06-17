@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Variation Swatches for WooCommerce 4.3.6\n"
+"Project-Id-Version: WPC Variation Swatches for WooCommerce 4.3.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-variation-swatches\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-13T08:28:54+00:00\n"
+"POT-Creation-Date: 2026-06-17T04:37:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-variation-swatches\n"
@@ -39,13 +39,22 @@ msgstr ""
 msgid "https://wpclever.net"
 msgstr ""
 
-#: wpc-variation-swatches.php:228
+#: templates/variable.php:35
+msgid "This product is currently out of stock and unavailable."
+msgstr ""
+
+#: templates/variable.php:53
+#: wpc-variation-swatches.php:1729
+msgid "Clear"
+msgstr ""
+
+#: wpc-variation-swatches.php:226
 #: wpc-variation-swatches.php:395
 #: wpc-variation-swatches.php:409
 msgid "WPC Variation Swatches"
 msgstr ""
 
-#: wpc-variation-swatches.php:233
+#: wpc-variation-swatches.php:231
 msgid "Custom name"
 msgstr ""
 
@@ -390,8 +399,8 @@ msgstr ""
 
 #. translators: count
 #: wpc-variation-swatches.php:838
-#: wpc-variation-swatches.php:1303
-#: wpc-variation-swatches.php:1338
+#: wpc-variation-swatches.php:1310
+#: wpc-variation-swatches.php:1345
 #, php-format
 msgid "+%d More"
 msgstr ""
@@ -402,7 +411,7 @@ msgstr ""
 
 #. translators: attribute name
 #: wpc-variation-swatches.php:850
-#: wpc-variation-swatches.php:1713
+#: wpc-variation-swatches.php:1722
 #, php-format
 msgid "Choose %s"
 msgstr ""
@@ -416,17 +425,17 @@ msgid "Select"
 msgstr ""
 
 #: wpc-variation-swatches.php:940
-#: wpc-variation-swatches.php:1042
+#: wpc-variation-swatches.php:1047
 msgid "Button"
 msgstr ""
 
 #: wpc-variation-swatches.php:941
-#: wpc-variation-swatches.php:1048
+#: wpc-variation-swatches.php:1053
 msgid "Color"
 msgstr ""
 
 #: wpc-variation-swatches.php:942
-#: wpc-variation-swatches.php:1062
+#: wpc-variation-swatches.php:1067
 msgid "Image"
 msgstr ""
 
@@ -446,69 +455,65 @@ msgstr ""
 msgid "Fill in group labels then press Enter or select from the dropdown."
 msgstr ""
 
-#: wpc-variation-swatches.php:1020
-#: wpc-variation-swatches.php:1626
+#: wpc-variation-swatches.php:1025
+#: wpc-variation-swatches.php:1633
 msgid "Group"
 msgstr ""
 
-#: wpc-variation-swatches.php:1024
+#: wpc-variation-swatches.php:1029
 msgid "Select a group"
 msgstr ""
 
 #. translators: attribute
-#: wpc-variation-swatches.php:1032
+#: wpc-variation-swatches.php:1037
 #, php-format
 msgid "Please add a group for attribute %s first, then you can select it here."
 msgstr ""
 
-#: wpc-variation-swatches.php:1043
-#: wpc-variation-swatches.php:1049
-#: wpc-variation-swatches.php:1077
-#: wpc-variation-swatches.php:1083
-#: wpc-variation-swatches.php:1628
+#: wpc-variation-swatches.php:1048
+#: wpc-variation-swatches.php:1054
+#: wpc-variation-swatches.php:1082
+#: wpc-variation-swatches.php:1088
+#: wpc-variation-swatches.php:1635
 msgid "Tooltip"
 msgstr ""
 
-#: wpc-variation-swatches.php:1069
+#: wpc-variation-swatches.php:1074
 msgid "Choose image"
 msgstr ""
 
-#: wpc-variation-swatches.php:1072
+#: wpc-variation-swatches.php:1077
 msgid "Remove image"
 msgstr ""
 
-#: wpc-variation-swatches.php:1082
+#: wpc-variation-swatches.php:1087
 msgid "Label"
 msgstr ""
 
-#: wpc-variation-swatches.php:1627
+#: wpc-variation-swatches.php:1634
 msgid "Value"
 msgstr ""
 
-#: wpc-variation-swatches.php:1720
-msgid "Clear"
-msgstr ""
-
-#: wpc-variation-swatches.php:1753
+#: wpc-variation-swatches.php:1762
 msgid "Above terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1754
+#: wpc-variation-swatches.php:1763
 msgid "Below terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1755
+#: wpc-variation-swatches.php:1764
 msgid "Before terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1756
+#: wpc-variation-swatches.php:1765
 msgid "After terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1757
+#: wpc-variation-swatches.php:1766
 msgid "Before term"
 msgstr ""
 
-#: wpc-variation-swatches.php:1758
+#: wpc-variation-swatches.php:1767
 msgid "After term"
 msgstr ""

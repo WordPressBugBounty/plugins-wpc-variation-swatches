@@ -3,23 +3,23 @@
 Plugin Name: WPC Variation Swatches for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Variation Swatches is a beautiful color, image, radio and buttons variation swatches for WooCommerce product attributes.
-Version: 4.3.6
+Version: 4.3.7
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
 Domain Path: /languages/
 Requires Plugins: woocommerce
-Requires at least: 4.0
-Tested up to: 6.9
+Requires at least: 5.9
+Tested up to: 7.0
 WC requires at least: 3.0
-WC tested up to: 10.7
+WC tested up to: 10.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.6' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.7' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -177,8 +177,6 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 }
 
                 function init() {
-                    // load text-domain
-                    load_plugin_textdomain( 'wpc-variation-swatches', false, basename( WPCVS_DIR ) . '/languages/' );
 
                     // shortcode
                     add_shortcode( 'wpcvs_archive', [ $this, 'shortcode_archive' ] );
@@ -198,14 +196,14 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 }
 
                 function ajax_add_to_cart() {
-                    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nonce'] ), 'wpcvs-security' ) ) {
+                    if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['nonce'] ) ), 'wpcvs-security' ) ) {
                         die( 'Permissions check failed!' );
                     }
 
-                    $product_id   = (int) sanitize_text_field( $_POST['product_id'] );
-                    $variation_id = (int) sanitize_text_field( $_POST['variation_id'] );
-                    $quantity     = (float) sanitize_text_field( $_POST['quantity'] );
-                    $variation    = (array) json_decode( stripslashes( sanitize_text_field( $_POST['attributes'] ) ) );
+                    $product_id   = (int) sanitize_text_field( wp_unslash( $_POST['product_id'] ?? '' ) );
+                    $variation_id = (int) sanitize_text_field( wp_unslash( $_POST['variation_id'] ?? '' ) );
+                    $quantity     = (float) sanitize_text_field( wp_unslash( $_POST['quantity'] ?? '' ) );
+                    $variation    = (array) json_decode( sanitize_text_field( wp_unslash( $_POST['attributes'] ?? '' ) ) );
 
                     if ( $product_id && $variation_id ) {
                         $item_key = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $variation );
@@ -239,9 +237,11 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 }
 
                 function save_fields( $post_id ) {
+                    // phpcs:disable WordPress.Security.NonceVerification.Missing -- hooked on 'woocommerce_save_product_variation'; WooCommerce verifies the product edit nonce before firing this action
                     if ( isset( $_POST['wpcvs_name'][ $post_id ] ) ) {
-                        update_post_meta( $post_id, 'wpcvs_name', sanitize_text_field( $_POST['wpcvs_name'][ $post_id ] ) );
+                        update_post_meta( $post_id, 'wpcvs_name', sanitize_text_field( wp_unslash( $_POST['wpcvs_name'][ $post_id ] ) ) );
                     }
+                    // phpcs:enable WordPress.Security.NonceVerification.Missing
                 }
 
                 function available_variation( $available, $variable, $variation ) {
@@ -264,17 +264,17 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 function scripts() {
                     if ( self::get_setting( 'tooltip_position', 'top' ) !== 'no' ) {
                         if ( self::get_setting( 'tooltip_library', 'tippy' ) === 'hint' ) {
-                            wp_enqueue_style( 'hint', WPCVS_URI . 'assets/libs/hint/hint.css' );
+                            wp_enqueue_style( 'hint', WPCVS_URI . 'assets/libs/hint/hint.css', [], WPCVS_VERSION );
                         }
 
                         if ( self::get_setting( 'tooltip_library', 'tippy' ) === 'tippy' ) {
-                            wp_enqueue_script( 'popper', WPCVS_URI . 'assets/libs/tippy/popper.min.js', [ 'jquery' ], WPCVS_VERSION );
-                            wp_enqueue_script( 'tippy', WPCVS_URI . 'assets/libs/tippy/tippy-bundle.umd.min.js', [ 'jquery' ], WPCVS_VERSION );
+                            wp_enqueue_script( 'popper', WPCVS_URI . 'assets/libs/tippy/popper.min.js', [ 'jquery' ], WPCVS_VERSION, true );
+                            wp_enqueue_script( 'tippy', WPCVS_URI . 'assets/libs/tippy/tippy-bundle.umd.min.js', [ 'jquery' ], WPCVS_VERSION, true );
                         }
                     }
 
                     if ( self::get_setting( 'archive_enable', 'no' ) === 'yes' ) {
-                        wp_enqueue_script( 'wc-add-to-cart-variation' );
+                        wp_enqueue_script( 'wc-add-to-cart-variation', '', [], WPCVS_VERSION, true );
                     }
 
                     wp_enqueue_style( 'wpcvs-frontend', WPCVS_URI . 'assets/css/frontend.css', [], WPCVS_VERSION );
@@ -399,7 +399,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 }
 
                 function admin_menu_content() {
-                    $active_tab = sanitize_key( $_GET['tab'] ?? 'settings' );
+                    $active_tab = sanitize_key( wp_unslash( $_GET['tab'] ?? 'settings' ) );
                     ?>
                     <div class="wpclever_settings_page wrap">
                         <div class="wpclever_settings_page_header">
@@ -424,7 +424,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             </div>
                         </div>
                         <h2></h2>
-                        <?php if ( isset( $_GET['settings-updated'] ) && $_GET['settings-updated'] ) { ?>
+                        <?php if ( isset( $_GET['settings-updated'] ) && sanitize_text_field( wp_unslash( $_GET['settings-updated'] ) ) ) { ?>
                             <div class="notice notice-success is-dismissible">
                                 <p><?php esc_html_e( 'Settings updated.', 'wpc-variation-swatches' ); ?></p>
                             </div>
@@ -948,7 +948,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
                 function add_attribute_fields() {
                     if ( ! empty( $_GET['edit'] ) ) {
-                        $id         = absint( sanitize_text_field( $_GET['edit'] ) );
+                        $id         = absint( sanitize_text_field( wp_unslash( $_GET['edit'] ) ) );
                         $wrap_start = '<tr class="form-field wpcvs-form-field"><th><label>';
                         $wrap_mid   = '</label></th><td>';
                         $wrap_end   = '</td></tr>';
@@ -960,17 +960,17 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                     }
 
                     $show_label = get_option( 'wpcvs_show_label_' . $id, 'no' );
-                    echo $wrap_start . esc_html__( 'Show label', 'wpc-variation-swatches' );
-                    echo $wrap_mid;
+                    echo wp_kses_post( $wrap_start ) . esc_html__( 'Show label', 'wpc-variation-swatches' );
+                    echo wp_kses_post( $wrap_mid );
                     echo '<select name="wpcvs_show_label">';
                     echo '<option value="no" ' . selected( 'no', $show_label, false ) . '>' . esc_html__( 'No', 'wpc-variation-swatches' ) . '</option>';
                     echo '<option value="yes" ' . selected( 'yes', $show_label, false ) . '>' . esc_html__( 'Yes', 'wpc-variation-swatches' ) . '</option>';
                     echo '</select>';
                     echo '<p class="description">' . esc_html__( 'When using color/image type, do you want to show the term label together with swatches?', 'wpc-variation-swatches' ) . '</p>';
-                    echo $wrap_end;
+                    echo wp_kses_post( $wrap_end );
 
-                    echo $wrap_start . esc_html__( 'Term groups', 'wpc-variation-swatches' );
-                    echo $wrap_mid;
+                    echo wp_kses_post( $wrap_start ) . esc_html__( 'Term groups', 'wpc-variation-swatches' );
+                    echo wp_kses_post( $wrap_mid );
                     echo '<select name="wpcvs_groups[]" class="wpcvs_groups_selector" multiple>';
 
                     if ( $id && ( $groups = get_option( 'wpcvs_groups_' . $id ) ) ) {
@@ -981,19 +981,24 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
                     echo '</select>';
                     echo '<p class="description">' . esc_html__( 'Fill in group labels then press Enter or select from the dropdown.', 'wpc-variation-swatches' ) . '</p>';
-                    echo $wrap_end;
+                    echo wp_kses_post( $wrap_end );
                 }
 
                 function save_attribute_fields( $id ) {
-                    if ( ! empty( $_REQUEST['wpcvs_groups'] ) ) {
-                        update_option( 'wpcvs_groups_' . $id, (array) self::sanitize_array( $_REQUEST['wpcvs_groups'] ) );
+                    // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended -- hooked on 'woocommerce_attribute_added' and 'woocommerce_attribute_updated'; WooCommerce verifies the attribute edit nonce before firing these actions
+                    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_array() handles sanitization
+                    $wpcvs_groups = isset( $_REQUEST['wpcvs_groups'] ) ? wp_unslash( $_REQUEST['wpcvs_groups'] ) : [];
+
+                    if ( ! empty( $wpcvs_groups ) ) {
+                        update_option( 'wpcvs_groups_' . $id, (array) self::sanitize_array( $wpcvs_groups ) );
                     } else {
                         delete_option( 'wpcvs_groups_' . $id );
                     }
 
                     if ( ! empty( $_REQUEST['wpcvs_show_label'] ) ) {
-                        update_option( 'wpcvs_show_label_' . $id, sanitize_text_field( $_REQUEST['wpcvs_show_label'] ) );
+                        update_option( 'wpcvs_show_label_' . $id, sanitize_text_field( wp_unslash( $_REQUEST['wpcvs_show_label'] ) ) );
                     }
+                    // phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
                 }
 
                 function add_term_fields( $term_or_tax ) {
@@ -1017,7 +1022,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
                     // group
                     $wpcvs_group = get_term_meta( $term_id, 'wpcvs_group', true );
-                    echo $wrap_start . esc_html__( 'Group', 'wpc-variation-swatches' ) . $wrap_mid;
+                    echo wp_kses_post( $wrap_start ) . esc_html__( 'Group', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid );
 
                     if ( $groups = get_option( 'wpcvs_groups_' . $attr_id ) ) {
                         echo '<select id="wpcvs_group" name="wpcvs_group">';
@@ -1032,21 +1037,21 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                         echo '<p>' . sprintf( /* translators: attribute */ esc_html__( 'Please add a group for attribute %s first, then you can select it here.', 'wpc-variation-swatches' ), esc_html( $attr->name ) ) . '</p>';
                     }
 
-                    echo $wrap_end;
+                    echo wp_kses_post( $wrap_end );
 
                     $wpcvs_tooltip = get_term_meta( $term_id, 'wpcvs_tooltip', true );
 
                     switch ( $attr->type ) {
                         case 'button':
                             $wpcvs_val = get_term_meta( $term_id, 'wpcvs_button', true );
-                            echo $wrap_start . esc_html__( 'Button', 'wpc-variation-swatches' ) . $wrap_mid . '<input id="wpcvs_button" name="wpcvs_button" value="' . esc_attr( $wpcvs_val ) . '" type="text"/>' . $wrap_end;
-                            echo $wrap_start . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . $wrap_mid . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . $wrap_end;
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Button', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ) . '<input id="wpcvs_button" name="wpcvs_button" value="' . esc_attr( $wpcvs_val ) . '" type="text"/>' . wp_kses_post( $wrap_end );
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ) . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . wp_kses_post( $wrap_end );
 
                             break;
                         case 'color':
                             $wpcvs_val = get_term_meta( $term_id, 'wpcvs_color', true );
-                            echo $wrap_start . esc_html__( 'Color', 'wpc-variation-swatches' ) . $wrap_mid . '<input class="wpcvs_color" id="wpcvs_color" name="wpcvs_color" value="' . esc_attr( $wpcvs_val ) . '" type="text"/>' . $wrap_end;
-                            echo $wrap_start . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . $wrap_mid . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . $wrap_end;
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Color', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ) . '<input class="wpcvs_color" id="wpcvs_color" name="wpcvs_color" value="' . esc_attr( $wpcvs_val ) . '" type="text"/>' . wp_kses_post( $wrap_end );
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ) . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . wp_kses_post( $wrap_end );
 
                             break;
                         case 'image':
@@ -1059,7 +1064,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                 $image = wc_placeholder_img_src();
                             }
 
-                            echo $wrap_start . esc_html__( 'Image', 'wpc-variation-swatches' ) . $wrap_mid; ?>
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Image', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ); ?>
                             <div id="wpcvs_image_thumbnail" style="float: left; margin-right: 10px;">
                                 <img src="<?php echo esc_url( $image ); ?>" width="60px" height="60px"/></div>
                             <div style="line-height: 60px;">
@@ -1073,14 +1078,14 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                 </button>
                             </div>
                             <?php
-                            echo $wrap_end;
-                            echo $wrap_start . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . $wrap_mid . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . $wrap_end;
+                            echo wp_kses_post( $wrap_end );
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ) . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . wp_kses_post( $wrap_end );
 
                             break;
                         case 'radio':
                             $wpcvs_val = get_term_meta( $term_id, 'wpcvs_radio', true );
-                            echo $wrap_start . esc_html__( 'Label', 'wpc-variation-swatches' ) . $wrap_mid . '<input id="wpcvs_radio" name="wpcvs_radio" value="' . esc_attr( $wpcvs_val ) . '" type="text"/>' . $wrap_end;
-                            echo $wrap_start . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . $wrap_mid . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . $wrap_end;
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Label', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ) . '<input id="wpcvs_radio" name="wpcvs_radio" value="' . esc_attr( $wpcvs_val ) . '" type="text"/>' . wp_kses_post( $wrap_end );
+                            echo wp_kses_post( $wrap_start ) . esc_html__( 'Tooltip', 'wpc-variation-swatches' ) . wp_kses_post( $wrap_mid ) . '<input id="wpcvs_tooltip" name="wpcvs_tooltip" value="' . esc_attr( $wpcvs_tooltip ) . '" type="text"/>' . wp_kses_post( $wrap_end );
 
                             break;
                         default:
@@ -1089,29 +1094,31 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 }
 
                 function save_term_fields( $term_id ) {
+                    // phpcs:disable WordPress.Security.NonceVerification.Missing -- hooked on 'create_pa_*' and 'edited_pa_*'; WordPress core verifies the term edit nonce (tag_ID nonce) before firing these taxonomy actions
                     if ( isset( $_POST['wpcvs_group'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_group', sanitize_text_field( $_POST['wpcvs_group'] ) );
+                        update_term_meta( $term_id, 'wpcvs_group', sanitize_text_field( wp_unslash( $_POST['wpcvs_group'] ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_color'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_color', sanitize_text_field( $_POST['wpcvs_color'] ) );
+                        update_term_meta( $term_id, 'wpcvs_color', sanitize_text_field( wp_unslash( $_POST['wpcvs_color'] ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_button'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_button', sanitize_text_field( $_POST['wpcvs_button'] ) );
+                        update_term_meta( $term_id, 'wpcvs_button', sanitize_text_field( wp_unslash( $_POST['wpcvs_button'] ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_image'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_image', sanitize_text_field( $_POST['wpcvs_image'] ) );
+                        update_term_meta( $term_id, 'wpcvs_image', sanitize_text_field( wp_unslash( $_POST['wpcvs_image'] ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_radio'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_radio', sanitize_text_field( $_POST['wpcvs_radio'] ) );
+                        update_term_meta( $term_id, 'wpcvs_radio', sanitize_text_field( wp_unslash( $_POST['wpcvs_radio'] ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_tooltip'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_tooltip', sanitize_text_field( $_POST['wpcvs_tooltip'] ) );
+                        update_term_meta( $term_id, 'wpcvs_tooltip', sanitize_text_field( wp_unslash( $_POST['wpcvs_tooltip'] ) ) );
                     }
+                    // phpcs:enable WordPress.Security.NonceVerification.Missing
                 }
 
                 function post_class( $classes ) {
@@ -1290,7 +1297,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
                                         if ( ! empty( $term_html ) ) {
                                             do_action( 'wpcvs_term_before', $term );
-                                            echo apply_filters( 'wpcvs_term_html', $term_html, $term, $args );
+                                            echo wp_kses_post( apply_filters( 'wpcvs_term_html', $term_html, $term, $args ) );
                                             do_action( 'wpcvs_term_after', $term );
                                         }
 
@@ -1300,7 +1307,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             }
 
                             if ( $limit && ( $count > $limit ) ) {
-                                echo apply_filters( 'wpcvs_more_html', '<span class="wpcvs-more"><a href="' . esc_url( $product->get_permalink() ) . '">' . sprintf( self::localization( 'more', /* translators: count */ esc_html__( '+%d More', 'wpc-variation-swatches' ) ), ( $count - $limit ) ) . '</a></span>', ( $count - $limit ) );
+                                echo wp_kses_post( apply_filters( 'wpcvs_more_html', '<span class="wpcvs-more"><a href="' . esc_url( $product->get_permalink() ) . '">' . sprintf( self::localization( 'more', /* translators: count */ esc_html__( '+%d More', 'wpc-variation-swatches' ) ), ( $count - $limit ) ) . '</a></span>', ( $count - $limit ) ) );
                             }
 
                             do_action( 'wpcvs_terms_after', $args );
@@ -1327,7 +1334,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                     }
 
                                     do_action( 'wpcvs_term_before', $option );
-                                    echo apply_filters( 'wpcvs_term_html', '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $option ) . '" data-group="wpcvs_no_group" data-label="' . esc_attr( $option ) . '" data-term="' . esc_attr( $option ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-label">' . esc_html( $option ) . '</span></span></span>', $option, $args );
+                                    echo wp_kses_post( apply_filters( 'wpcvs_term_html', '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $option ) . '" data-group="wpcvs_no_group" data-label="' . esc_attr( $option ) . '" data-term="' . esc_attr( $option ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-label">' . esc_html( $option ) . '</span></span></span>', $option, $args ) );
                                     do_action( 'wpcvs_term_after', $option );
                                 }
 
@@ -1335,7 +1342,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             }
 
                             if ( $limit && ( $count > $limit ) ) {
-                                echo apply_filters( 'wpcvs_more_html', '<span class="wpcvs-more"><a href="' . esc_url( $product->get_permalink() ) . '">' . sprintf( self::localization( 'more', /* translators: count */ esc_html__( '+%d More', 'wpc-variation-swatches' ) ), ( $count - $limit ) ) . '</a></span>', ( $count - $limit ) );
+                                echo wp_kses_post( apply_filters( 'wpcvs_more_html', '<span class="wpcvs-more"><a href="' . esc_url( $product->get_permalink() ) . '">' . sprintf( self::localization( 'more', /* translators: count */ esc_html__( '+%d More', 'wpc-variation-swatches' ) ), ( $count - $limit ) ) . '</a></span>', ( $count - $limit ) ) );
                             }
 
                             do_action( 'wpcvs_terms_after', $args );
@@ -1564,7 +1571,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
                                                 if ( ! empty( $term_html ) ) {
                                                     do_action( 'wpcvs_term_before', $term );
-                                                    echo apply_filters( 'wpcvs_term_html', $term_html, $term, $args );
+                                                    echo wp_kses_post( apply_filters( 'wpcvs_term_html', $term_html, $term, $args ) );
                                                     do_action( 'wpcvs_term_after', $term );
                                                 }
 
@@ -1602,7 +1609,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                         }
 
                                         do_action( 'wpcvs_term_before', $option );
-                                        echo apply_filters( 'wpcvs_term_html', '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $option ) . '" data-group="wpcvs_no_group" data-label="' . esc_attr( $option ) . '" data-term="' . esc_attr( $option ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-label">' . esc_html( $option ) . '</span></span></span>', $option, $args );
+                                        echo wp_kses_post( apply_filters( 'wpcvs_term_html', '<span class="' . esc_attr( $class ) . '" ' . $tooltip_content . ' title="' . esc_attr( $option ) . '" data-group="wpcvs_no_group" data-label="' . esc_attr( $option ) . '" data-term="' . esc_attr( $option ) . '"><span class="wpcvs-term-inner"><span class="wpcvs-term-label">' . esc_html( $option ) . '</span></span></span>', $option, $args ) );
                                         do_action( 'wpcvs_term_after', $option );
                                     }
 
@@ -1702,7 +1709,9 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                 <div class="select value">
                                     <?php
                                     $attr     = 'attribute_' . sanitize_title( $attribute_name );
-                                    $selected = isset( $_REQUEST[ $attr ] ) ? wc_clean( stripslashes( urldecode( $_REQUEST[ $attr ] ) ) ) : $product->get_variation_default_attribute( $attribute_name );
+                                    // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- $attr key is built from sanitize_title(); value is sanitized via wp_unslash() + sanitize_text_field()
+                                    $attr_raw = isset( $_REQUEST[ $attr ] ) ? sanitize_text_field( urldecode( wp_unslash( $_REQUEST[ $attr ] ) ) ) : '';
+                                    $selected = ! empty( $attr_raw ) ? $attr_raw : $product->get_variation_default_attribute( $attribute_name );
                                     wc_dropdown_variation_attribute_options( apply_filters( 'wpcvs_dropdown_variation_attribute_options_args', [
                                             'options'          => $options,
                                             'attribute'        => $attribute_name,
@@ -1717,7 +1726,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             </div>
                         <?php }
 
-                        echo '<div class="reset">' . apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'wpc-variation-swatches' ) . '</a>' ) . '</div>';
+                        echo '<div class="reset">' . wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'wpc-variation-swatches' ) . '</a>' ) ) . '</div>';
                         do_action( 'wpcvs_archive_variations_after', $product );
                         echo '</div>';
                         do_action( 'wpcvs_archive_variations_form_after', $product );

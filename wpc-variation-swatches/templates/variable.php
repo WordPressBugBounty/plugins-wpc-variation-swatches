@@ -28,17 +28,17 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
     <form class="variations_form cart"
           action="<?php echo esc_url( apply_filters( 'woocommerce_add_to_cart_form_action', $product->get_permalink() ) ); ?>"
           method="post" enctype='multipart/form-data' data-product_id="<?php echo absint( $product->get_id() ); ?>"
-          data-product_variations="<?php echo $variations_attr; // WPCS: XSS ok. ?>">
+          data-product_variations="<?php echo esc_attr( $variations_attr ); ?>">
         <?php do_action( 'woocommerce_before_variations_form' ); ?>
 
         <?php if ( empty( $available_variations ) && false !== $available_variations ) : ?>
-            <p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'woocommerce' ) ) ); ?></p>
+            <p class="stock out-of-stock"><?php echo esc_html( apply_filters( 'woocommerce_out_of_stock_message', __( 'This product is currently out of stock and unavailable.', 'wpc-variation-swatches' ) ) ); ?></p>
         <?php else : ?>
             <div class="variations wpcvs-attributes wpcvs-attributes-stacked" role="presentation">
                 <?php foreach ( $attributes as $attribute_name => $options ) : ?>
                     <div class="wpcvs-attribute">
                         <div class="label wpcvs-attribute-label">
-                            <label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo wc_attribute_label( $attribute_name ); // WPCS: XSS ok. ?></label>
+                            <label for="<?php echo esc_attr( sanitize_title( $attribute_name ) ); ?>"><?php echo esc_html( wc_attribute_label( $attribute_name ) ); ?></label>
                             <span class="wpcvs-attribute-selected"></span>
                         </div>
                         <div class="value wpcvs-attribute-value">
@@ -50,7 +50,7 @@ do_action( 'woocommerce_before_add_to_cart_form' ); ?>
                                             'product'   => $product,
                                     ]
                             );
-                            echo end( $attribute_keys ) === $attribute_name ? wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'woocommerce' ) . '</a>' ) ) : '';
+                            echo end( $attribute_keys ) === $attribute_name ? wp_kses_post( apply_filters( 'woocommerce_reset_variations_link', '<a class="reset_variations" href="#">' . esc_html__( 'Clear', 'wpc-variation-swatches' ) . '</a>' ) ) : '';
                             ?>
                         </div>
                     </div>
