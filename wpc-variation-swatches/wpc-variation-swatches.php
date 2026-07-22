@@ -3,7 +3,7 @@
 Plugin Name: WPC Variation Swatches for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Variation Swatches is a beautiful color, image, radio and buttons variation swatches for WooCommerce product attributes.
-Version: 4.3.7
+Version: 4.3.8
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
@@ -12,14 +12,14 @@ Requires Plugins: woocommerce
 Requires at least: 5.9
 Tested up to: 7.0
 WC requires at least: 3.0
-WC tested up to: 10.8
+WC tested up to: 10.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.7' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.8' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -239,7 +239,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 function save_fields( $post_id ) {
                     // phpcs:disable WordPress.Security.NonceVerification.Missing -- hooked on 'woocommerce_save_product_variation'; WooCommerce verifies the product edit nonce before firing this action
                     if ( isset( $_POST['wpcvs_name'][ $post_id ] ) ) {
-                        update_post_meta( $post_id, 'wpcvs_name', sanitize_text_field( wp_unslash( $_POST['wpcvs_name'][ $post_id ] ) ) );
+                        update_post_meta( $post_id, 'wpcvs_name', sanitize_text_field( wp_unslash( ( $_POST['wpcvs_name'] ?? [] )[ $post_id ] ?? '' ) ) );
                     }
                     // phpcs:enable WordPress.Security.NonceVerification.Missing
                 }
@@ -424,7 +424,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             </div>
                         </div>
                         <h2></h2>
-                        <?php if ( isset( $_GET['settings-updated'] ) && sanitize_text_field( wp_unslash( $_GET['settings-updated'] ) ) ) { ?>
+                        <?php if ( isset( $_GET['settings-updated'] ) && sanitize_text_field( wp_unslash( $_GET['settings-updated'] ?? '' ) ) ) { ?>
                             <div class="notice notice-success is-dismissible">
                                 <p><?php esc_html_e( 'Settings updated.', 'wpc-variation-swatches' ); ?></p>
                             </div>
@@ -948,7 +948,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
 
                 function add_attribute_fields() {
                     if ( ! empty( $_GET['edit'] ) ) {
-                        $id         = absint( sanitize_text_field( wp_unslash( $_GET['edit'] ) ) );
+                        $id         = absint( sanitize_text_field( wp_unslash( $_GET['edit'] ?? '' ) ) );
                         $wrap_start = '<tr class="form-field wpcvs-form-field"><th><label>';
                         $wrap_mid   = '</label></th><td>';
                         $wrap_end   = '</td></tr>';
@@ -987,7 +987,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 function save_attribute_fields( $id ) {
                     // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended -- hooked on 'woocommerce_attribute_added' and 'woocommerce_attribute_updated'; WooCommerce verifies the attribute edit nonce before firing these actions
                     // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitize_array() handles sanitization
-                    $wpcvs_groups = isset( $_REQUEST['wpcvs_groups'] ) ? wp_unslash( $_REQUEST['wpcvs_groups'] ) : [];
+                    $wpcvs_groups = isset( $_REQUEST['wpcvs_groups'] ) ? wp_unslash( $_REQUEST['wpcvs_groups'] ?? '' ) : [];
 
                     if ( ! empty( $wpcvs_groups ) ) {
                         update_option( 'wpcvs_groups_' . $id, (array) self::sanitize_array( $wpcvs_groups ) );
@@ -996,7 +996,7 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                     }
 
                     if ( ! empty( $_REQUEST['wpcvs_show_label'] ) ) {
-                        update_option( 'wpcvs_show_label_' . $id, sanitize_text_field( wp_unslash( $_REQUEST['wpcvs_show_label'] ) ) );
+                        update_option( 'wpcvs_show_label_' . $id, sanitize_text_field( wp_unslash( $_REQUEST['wpcvs_show_label'] ?? '' ) ) );
                     }
                     // phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
                 }
@@ -1096,27 +1096,27 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 function save_term_fields( $term_id ) {
                     // phpcs:disable WordPress.Security.NonceVerification.Missing -- hooked on 'create_pa_*' and 'edited_pa_*'; WordPress core verifies the term edit nonce (tag_ID nonce) before firing these taxonomy actions
                     if ( isset( $_POST['wpcvs_group'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_group', sanitize_text_field( wp_unslash( $_POST['wpcvs_group'] ) ) );
+                        update_term_meta( $term_id, 'wpcvs_group', sanitize_text_field( wp_unslash( $_POST['wpcvs_group'] ?? '' ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_color'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_color', sanitize_text_field( wp_unslash( $_POST['wpcvs_color'] ) ) );
+                        update_term_meta( $term_id, 'wpcvs_color', sanitize_text_field( wp_unslash( $_POST['wpcvs_color'] ?? '' ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_button'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_button', sanitize_text_field( wp_unslash( $_POST['wpcvs_button'] ) ) );
+                        update_term_meta( $term_id, 'wpcvs_button', sanitize_text_field( wp_unslash( $_POST['wpcvs_button'] ?? '' ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_image'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_image', sanitize_text_field( wp_unslash( $_POST['wpcvs_image'] ) ) );
+                        update_term_meta( $term_id, 'wpcvs_image', sanitize_text_field( wp_unslash( $_POST['wpcvs_image'] ?? '' ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_radio'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_radio', sanitize_text_field( wp_unslash( $_POST['wpcvs_radio'] ) ) );
+                        update_term_meta( $term_id, 'wpcvs_radio', sanitize_text_field( wp_unslash( $_POST['wpcvs_radio'] ?? '' ) ) );
                     }
 
                     if ( isset( $_POST['wpcvs_tooltip'] ) ) {
-                        update_term_meta( $term_id, 'wpcvs_tooltip', sanitize_text_field( wp_unslash( $_POST['wpcvs_tooltip'] ) ) );
+                        update_term_meta( $term_id, 'wpcvs_tooltip', sanitize_text_field( wp_unslash( $_POST['wpcvs_tooltip'] ?? '' ) ) );
                     }
                     // phpcs:enable WordPress.Security.NonceVerification.Missing
                 }
