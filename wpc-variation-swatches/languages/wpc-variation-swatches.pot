@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WPC Variation Swatches for WooCommerce 4.3.8\n"
+"Project-Id-Version: WPC Variation Swatches for WooCommerce 4.3.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wpc-variation-swatches\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-22T07:42:33+00:00\n"
+"POT-Creation-Date: 2026-09-11T03:07:52+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: wpc-variation-swatches\n"
@@ -44,84 +44,96 @@ msgid "This product is currently out of stock and unavailable."
 msgstr ""
 
 #: templates/variable.php:53
-#: wpc-variation-swatches.php:1729
+#: wpc-variation-swatches.php:1728
 msgid "Clear"
 msgstr ""
 
-#: wpc-variation-swatches.php:226
-#: wpc-variation-swatches.php:395
-#: wpc-variation-swatches.php:409
+#: wpc-variation-swatches.php:225
+#: wpc-variation-swatches.php:394
+#: wpc-variation-swatches.php:408
 msgid "WPC Variation Swatches"
 msgstr ""
 
-#: wpc-variation-swatches.php:231
+#: wpc-variation-swatches.php:230
 msgid "Custom name"
 msgstr ""
 
-#: wpc-variation-swatches.php:352
-#: wpc-variation-swatches.php:798
-#: wpc-variation-swatches.php:804
+#: wpc-variation-swatches.php:351
+#: wpc-variation-swatches.php:797
+#: wpc-variation-swatches.php:803
 msgid "Add to cart"
 msgstr ""
 
-#: wpc-variation-swatches.php:353
-#: wpc-variation-swatches.php:809
-#: wpc-variation-swatches.php:815
+#: wpc-variation-swatches.php:352
+#: wpc-variation-swatches.php:808
+#: wpc-variation-swatches.php:814
 msgid "Select options"
 msgstr ""
 
-#: wpc-variation-swatches.php:354
-#: wpc-variation-swatches.php:820
-#: wpc-variation-swatches.php:826
+#: wpc-variation-swatches.php:353
+#: wpc-variation-swatches.php:819
+#: wpc-variation-swatches.php:825
 msgid "View cart"
 msgstr ""
 
-#: wpc-variation-swatches.php:395
+#: wpc-variation-swatches.php:394
 msgid "Variation Swatches"
 msgstr ""
 
 #. translators: stars
-#: wpc-variation-swatches.php:412
+#: wpc-variation-swatches.php:411
 #, php-format
 msgid "Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating."
 msgstr ""
 
-#: wpc-variation-swatches.php:415
+#: wpc-variation-swatches.php:414
 msgid "Reviews"
 msgstr ""
 
-#: wpc-variation-swatches.php:418
+#: wpc-variation-swatches.php:417
 msgid "Changelog"
 msgstr ""
 
-#: wpc-variation-swatches.php:421
+#: wpc-variation-swatches.php:420
 msgid "Discussion"
 msgstr ""
 
-#: wpc-variation-swatches.php:429
+#: wpc-variation-swatches.php:428
 msgid "Settings updated."
 msgstr ""
 
-#: wpc-variation-swatches.php:436
-#: wpc-variation-swatches.php:908
+#: wpc-variation-swatches.php:435
+#: wpc-variation-swatches.php:907
 msgid "Settings"
 msgstr ""
 
-#: wpc-variation-swatches.php:440
+#: wpc-variation-swatches.php:439
 msgid "Localization"
 msgstr ""
 
-#: wpc-variation-swatches.php:444
+#: wpc-variation-swatches.php:443
 msgid "Essential Kit"
 msgstr ""
 
-#: wpc-variation-swatches.php:470
-#: wpc-variation-swatches.php:792
+#: wpc-variation-swatches.php:469
+#: wpc-variation-swatches.php:791
 msgid "General"
 msgstr ""
 
-#: wpc-variation-swatches.php:474
+#: wpc-variation-swatches.php:473
 msgid "Button swatch by default"
+msgstr ""
+
+#: wpc-variation-swatches.php:476
+#: wpc-variation-swatches.php:487
+#: wpc-variation-swatches.php:533
+#: wpc-variation-swatches.php:543
+#: wpc-variation-swatches.php:553
+#: wpc-variation-swatches.php:578
+#: wpc-variation-swatches.php:650
+#: wpc-variation-swatches.php:684
+#: wpc-variation-swatches.php:966
+msgid "Yes"
 msgstr ""
 
 #: wpc-variation-swatches.php:477
@@ -132,388 +144,376 @@ msgstr ""
 #: wpc-variation-swatches.php:579
 #: wpc-variation-swatches.php:651
 #: wpc-variation-swatches.php:685
-#: wpc-variation-swatches.php:967
-msgid "Yes"
-msgstr ""
-
-#: wpc-variation-swatches.php:478
-#: wpc-variation-swatches.php:489
-#: wpc-variation-swatches.php:535
-#: wpc-variation-swatches.php:545
-#: wpc-variation-swatches.php:555
-#: wpc-variation-swatches.php:580
-#: wpc-variation-swatches.php:652
-#: wpc-variation-swatches.php:686
-#: wpc-variation-swatches.php:966
+#: wpc-variation-swatches.php:965
 msgid "No"
 msgstr ""
 
-#: wpc-variation-swatches.php:480
+#: wpc-variation-swatches.php:479
 msgid "Turn the default type to button type."
 msgstr ""
 
-#: wpc-variation-swatches.php:485
+#: wpc-variation-swatches.php:484
 msgid "Enable second click to undo?"
 msgstr ""
 
-#: wpc-variation-swatches.php:491
+#: wpc-variation-swatches.php:490
 msgid "Enable/disable click again to undo the selection on current attribute."
 msgstr ""
 
-#: wpc-variation-swatches.php:496
+#: wpc-variation-swatches.php:495
 msgid "Tooltip library"
 msgstr ""
 
-#: wpc-variation-swatches.php:499
+#: wpc-variation-swatches.php:498
 msgid "Hint.css"
 msgstr ""
 
-#: wpc-variation-swatches.php:500
+#: wpc-variation-swatches.php:499
 msgid "Tippy.js"
 msgstr ""
 
-#: wpc-variation-swatches.php:501
+#: wpc-variation-swatches.php:500
 msgid "None (Disable)"
 msgstr ""
 
-#: wpc-variation-swatches.php:510
+#: wpc-variation-swatches.php:509
 msgid "Tooltip position"
 msgstr ""
 
-#: wpc-variation-swatches.php:513
+#: wpc-variation-swatches.php:512
 msgid "Top"
 msgstr ""
 
-#: wpc-variation-swatches.php:514
+#: wpc-variation-swatches.php:513
 msgid "Right"
 msgstr ""
 
-#: wpc-variation-swatches.php:515
+#: wpc-variation-swatches.php:514
 msgid "Bottom"
 msgstr ""
 
-#: wpc-variation-swatches.php:516
+#: wpc-variation-swatches.php:515
 msgid "Left"
 msgstr ""
 
-#: wpc-variation-swatches.php:518
+#: wpc-variation-swatches.php:517
 msgid "For Hint.css only."
 msgstr ""
 
-#: wpc-variation-swatches.php:522
+#: wpc-variation-swatches.php:521
 msgid "Style"
 msgstr ""
 
-#: wpc-variation-swatches.php:525
+#: wpc-variation-swatches.php:524
 msgid "Square"
 msgstr ""
 
-#: wpc-variation-swatches.php:526
+#: wpc-variation-swatches.php:525
 msgid "Rounded"
 msgstr ""
 
-#: wpc-variation-swatches.php:531
-#: wpc-variation-swatches.php:972
+#: wpc-variation-swatches.php:530
+#: wpc-variation-swatches.php:971
 msgid "Term groups"
 msgstr ""
 
-#: wpc-variation-swatches.php:537
+#: wpc-variation-swatches.php:536
 msgid "Enable/disable using group for attribute terms."
 msgstr ""
 
-#: wpc-variation-swatches.php:541
+#: wpc-variation-swatches.php:540
 msgid "Select default attributes"
 msgstr ""
 
-#: wpc-variation-swatches.php:547
+#: wpc-variation-swatches.php:546
 msgid "Select default attributes automatically if they were not set."
 msgstr ""
 
-#: wpc-variation-swatches.php:551
+#: wpc-variation-swatches.php:550
 msgid "Swatches for non-variable products"
 msgstr ""
 
-#: wpc-variation-swatches.php:557
+#: wpc-variation-swatches.php:556
 msgid "Display visible attributes as swatches for non-variable products."
 msgstr ""
 
-#: wpc-variation-swatches.php:562
+#: wpc-variation-swatches.php:561
 msgid "Single Product"
 msgstr ""
 
-#: wpc-variation-swatches.php:566
+#: wpc-variation-swatches.php:565
 msgid "Layout"
 msgstr ""
 
-#: wpc-variation-swatches.php:569
+#: wpc-variation-swatches.php:568
 msgid "Table (default)"
 msgstr ""
 
-#: wpc-variation-swatches.php:570
+#: wpc-variation-swatches.php:569
 msgid "Stacked"
 msgstr ""
 
-#: wpc-variation-swatches.php:572
+#: wpc-variation-swatches.php:571
 msgid "Choose the layout for swatches on the single product page."
 msgstr ""
 
-#: wpc-variation-swatches.php:576
+#: wpc-variation-swatches.php:575
 msgid "Change URL"
 msgstr ""
 
-#: wpc-variation-swatches.php:582
+#: wpc-variation-swatches.php:581
 msgid "Change the URL on address bar when choosing attribute term."
 msgstr ""
 
-#: wpc-variation-swatches.php:586
+#: wpc-variation-swatches.php:585
 msgid "Replacement"
 msgstr ""
 
-#: wpc-variation-swatches.php:589
-#: wpc-variation-swatches.php:648
+#: wpc-variation-swatches.php:588
+#: wpc-variation-swatches.php:647
 msgid "Enable"
 msgstr ""
 
-#: wpc-variation-swatches.php:590
+#: wpc-variation-swatches.php:589
 msgid "Disable"
 msgstr ""
 
-#: wpc-variation-swatches.php:592
+#: wpc-variation-swatches.php:591
 msgid "Enable it to replace the product name/price/description when choosing variations."
 msgstr ""
 
-#: wpc-variation-swatches.php:596
-#: wpc-variation-swatches.php:692
+#: wpc-variation-swatches.php:595
+#: wpc-variation-swatches.php:691
 msgid "Selector"
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:600
-#: wpc-variation-swatches.php:696
+#: wpc-variation-swatches.php:599
+#: wpc-variation-swatches.php:695
 #, php-format
 msgid "Product wrapper selector. Default: %s"
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:610
-#: wpc-variation-swatches.php:726
+#: wpc-variation-swatches.php:609
+#: wpc-variation-swatches.php:725
 #, php-format
 msgid "Product name selector. Default: %s"
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:620
-#: wpc-variation-swatches.php:736
+#: wpc-variation-swatches.php:619
+#: wpc-variation-swatches.php:735
 #, php-format
 msgid "Product price selector. Default: %s"
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:630
+#: wpc-variation-swatches.php:629
 #, php-format
 msgid "Product short description selector. Default: %s"
 msgstr ""
 
-#: wpc-variation-swatches.php:644
+#: wpc-variation-swatches.php:643
 msgid "Product Archive"
 msgstr ""
 
-#: wpc-variation-swatches.php:654
+#: wpc-variation-swatches.php:653
 msgid "Enable swatches for product archive page."
 msgstr ""
 
-#: wpc-variation-swatches.php:658
+#: wpc-variation-swatches.php:657
 msgid "Position"
 msgstr ""
 
-#: wpc-variation-swatches.php:661
+#: wpc-variation-swatches.php:660
 msgid "Before add to cart button"
 msgstr ""
 
-#: wpc-variation-swatches.php:662
+#: wpc-variation-swatches.php:661
 msgid "After add to cart button"
 msgstr ""
 
-#: wpc-variation-swatches.php:663
+#: wpc-variation-swatches.php:662
 msgid "None"
 msgstr ""
 
 #. translators: shortcode
-#: wpc-variation-swatches.php:665
+#: wpc-variation-swatches.php:664
 #, php-format
 msgid "Swatches position on product archive page. You also can use the shortcode: %s"
 msgstr ""
 
-#: wpc-variation-swatches.php:670
+#: wpc-variation-swatches.php:669
 msgid "Limit"
 msgstr ""
 
-#: wpc-variation-swatches.php:677
+#: wpc-variation-swatches.php:676
 msgid "Maximum terms of each attribute will be shown on product archive page."
 msgstr ""
 
-#: wpc-variation-swatches.php:682
+#: wpc-variation-swatches.php:681
 msgid "Change link"
 msgstr ""
 
-#: wpc-variation-swatches.php:688
+#: wpc-variation-swatches.php:687
 msgid "Change the product link when choosing attribute term."
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:706
+#: wpc-variation-swatches.php:705
 #, php-format
 msgid "Product link selector. Default: %s"
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:716
+#: wpc-variation-swatches.php:715
 #, php-format
 msgid "Product image selector. Default: %s"
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:746
+#: wpc-variation-swatches.php:745
 #, php-format
 msgid "Add to cart button selector. Default: %s"
 msgstr ""
 
 #. translators: selector
-#: wpc-variation-swatches.php:756
+#: wpc-variation-swatches.php:755
 #, php-format
 msgid "Add to cart button text selector. Default: %s"
 msgstr ""
 
-#: wpc-variation-swatches.php:783
-#: wpc-variation-swatches.php:869
+#: wpc-variation-swatches.php:782
+#: wpc-variation-swatches.php:868
 msgid "import / export"
 msgstr ""
 
-#: wpc-variation-swatches.php:794
+#: wpc-variation-swatches.php:793
 msgid "Leave blank to use the default text and its equivalent translation in multiple languages."
 msgstr ""
 
-#: wpc-variation-swatches.php:831
+#: wpc-variation-swatches.php:830
 msgid "More"
 msgstr ""
 
 #. translators: count
-#: wpc-variation-swatches.php:838
-#: wpc-variation-swatches.php:1310
-#: wpc-variation-swatches.php:1345
+#: wpc-variation-swatches.php:837
+#: wpc-variation-swatches.php:1309
+#: wpc-variation-swatches.php:1344
 #, php-format
 msgid "+%d More"
 msgstr ""
 
-#: wpc-variation-swatches.php:843
+#: wpc-variation-swatches.php:842
 msgid "Option none"
 msgstr ""
 
 #. translators: attribute name
-#: wpc-variation-swatches.php:850
-#: wpc-variation-swatches.php:1722
+#: wpc-variation-swatches.php:849
+#: wpc-variation-swatches.php:1721
 #, php-format
 msgid "Choose %s"
 msgstr ""
 
-#: wpc-variation-swatches.php:924
+#: wpc-variation-swatches.php:923
 msgid "Community support"
 msgstr ""
 
-#: wpc-variation-swatches.php:939
+#: wpc-variation-swatches.php:938
 msgid "Select"
 msgstr ""
 
-#: wpc-variation-swatches.php:940
-#: wpc-variation-swatches.php:1047
+#: wpc-variation-swatches.php:939
+#: wpc-variation-swatches.php:1046
 msgid "Button"
 msgstr ""
 
-#: wpc-variation-swatches.php:941
-#: wpc-variation-swatches.php:1053
+#: wpc-variation-swatches.php:940
+#: wpc-variation-swatches.php:1052
 msgid "Color"
 msgstr ""
 
-#: wpc-variation-swatches.php:942
-#: wpc-variation-swatches.php:1067
+#: wpc-variation-swatches.php:941
+#: wpc-variation-swatches.php:1066
 msgid "Image"
 msgstr ""
 
-#: wpc-variation-swatches.php:943
+#: wpc-variation-swatches.php:942
 msgid "Radio"
 msgstr ""
 
-#: wpc-variation-swatches.php:963
+#: wpc-variation-swatches.php:962
 msgid "Show label"
 msgstr ""
 
-#: wpc-variation-swatches.php:969
+#: wpc-variation-swatches.php:968
 msgid "When using color/image type, do you want to show the term label together with swatches?"
 msgstr ""
 
-#: wpc-variation-swatches.php:983
+#: wpc-variation-swatches.php:982
 msgid "Fill in group labels then press Enter or select from the dropdown."
 msgstr ""
 
-#: wpc-variation-swatches.php:1025
-#: wpc-variation-swatches.php:1633
+#: wpc-variation-swatches.php:1024
+#: wpc-variation-swatches.php:1632
 msgid "Group"
 msgstr ""
 
-#: wpc-variation-swatches.php:1029
+#: wpc-variation-swatches.php:1028
 msgid "Select a group"
 msgstr ""
 
 #. translators: attribute
-#: wpc-variation-swatches.php:1037
+#: wpc-variation-swatches.php:1036
 #, php-format
 msgid "Please add a group for attribute %s first, then you can select it here."
 msgstr ""
 
-#: wpc-variation-swatches.php:1048
-#: wpc-variation-swatches.php:1054
-#: wpc-variation-swatches.php:1082
-#: wpc-variation-swatches.php:1088
-#: wpc-variation-swatches.php:1635
+#: wpc-variation-swatches.php:1047
+#: wpc-variation-swatches.php:1053
+#: wpc-variation-swatches.php:1081
+#: wpc-variation-swatches.php:1087
+#: wpc-variation-swatches.php:1634
 msgid "Tooltip"
 msgstr ""
 
-#: wpc-variation-swatches.php:1074
+#: wpc-variation-swatches.php:1073
 msgid "Choose image"
 msgstr ""
 
-#: wpc-variation-swatches.php:1077
+#: wpc-variation-swatches.php:1076
 msgid "Remove image"
 msgstr ""
 
-#: wpc-variation-swatches.php:1087
+#: wpc-variation-swatches.php:1086
 msgid "Label"
 msgstr ""
 
-#: wpc-variation-swatches.php:1634
+#: wpc-variation-swatches.php:1633
 msgid "Value"
 msgstr ""
 
-#: wpc-variation-swatches.php:1762
+#: wpc-variation-swatches.php:1761
 msgid "Above terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1763
+#: wpc-variation-swatches.php:1762
 msgid "Below terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1764
+#: wpc-variation-swatches.php:1763
 msgid "Before terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1765
+#: wpc-variation-swatches.php:1764
 msgid "After terms container"
 msgstr ""
 
-#: wpc-variation-swatches.php:1766
+#: wpc-variation-swatches.php:1765
 msgid "Before term"
 msgstr ""
 
-#: wpc-variation-swatches.php:1767
+#: wpc-variation-swatches.php:1766
 msgid "After term"
 msgstr ""

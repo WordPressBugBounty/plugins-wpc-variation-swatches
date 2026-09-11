@@ -3,23 +3,22 @@
 Plugin Name: WPC Variation Swatches for WooCommerce
 Plugin URI: https://wpclever.net/
 Description: WPC Variation Swatches is a beautiful color, image, radio and buttons variation swatches for WooCommerce product attributes.
-Version: 4.3.8
 Author: WPClever
 Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
 Domain Path: /languages/
 Requires Plugins: woocommerce
+Version: 4.3.9
 Requires at least: 5.9
-Tested up to: 7.0
 WC requires at least: 3.0
-WC tested up to: 10.9
+WC tested up to: 11.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.8' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.9' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
