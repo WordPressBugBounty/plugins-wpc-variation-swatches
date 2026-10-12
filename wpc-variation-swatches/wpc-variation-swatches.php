@@ -8,17 +8,17 @@ Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
 Domain Path: /languages/
 Requires Plugins: woocommerce
-Version: 4.3.9
+Version: 4.4.0
 Requires at least: 5.9
 WC requires at least: 3.0
-WC tested up to: 11.1
+WC tested up to: 11.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.3.9' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.4.0' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -398,53 +398,71 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                 }
 
                 function admin_menu_content() {
-                    $active_tab = sanitize_key( wp_unslash( $_GET['tab'] ?? 'settings' ) );
+                    $active_tab  = sanitize_key( wp_unslash( $_GET['tab'] ?? 'settings' ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                    $title_badge = esc_html__( 'Settings', 'wpc-variation-swatches' );
+
+                    if ( $active_tab === 'localization' ) {
+                        $title_badge = esc_html__( 'Localization', 'wpc-variation-swatches' );
+                    }
                     ?>
-                    <div class="wpclever_settings_page wrap">
-                        <div class="wpclever_settings_page_header">
-                            <a class="wpclever_settings_page_header_logo" href="https://wpclever.net/"
-                               target="_blank" title="Visit wpclever.net"></a>
-                            <div class="wpclever_settings_page_header_text">
-                                <div class="wpclever_settings_page_title"><?php echo esc_html__( 'WPC Variation Swatches', 'wpc-variation-swatches' ) . ' ' . esc_html( WPCVS_VERSION ); ?></div>
-                                <div class="wpclever_settings_page_desc about-text">
-                                    <p>
-                                        <?php printf( /* translators: stars */ esc_html__( 'Thank you for using our plugin! If you are satisfied, please reward it a full five-star %s rating.', 'wpc-variation-swatches' ), '<span style="color:#ffb900">&#9733;&#9733;&#9733;&#9733;&#9733;</span>' ); ?>
-                                        <br/>
-                                        <a href="<?php echo esc_url( WPCVS_REVIEWS ); ?>"
-                                           target="_blank"><?php esc_html_e( 'Reviews', 'wpc-variation-swatches' ); ?></a>
-                                        |
-                                        <a href="<?php echo esc_url( WPCVS_CHANGELOG ); ?>"
-                                           target="_blank"><?php esc_html_e( 'Changelog', 'wpc-variation-swatches' ); ?></a>
-                                        |
-                                        <a href="<?php echo esc_url( WPCVS_DISCUSSION ); ?>"
-                                           target="_blank"><?php esc_html_e( 'Discussion', 'wpc-variation-swatches' ); ?></a>
-                                    </p>
+                    <div class="wrap wpcvs-settings-wrap">
+                        <div class="wpcvs-settings-header">
+                            <div class="wpcvs-settings-header-inner">
+                                <div class="wpcvs-header-left">
+                                    <div class="wpcvs-logo">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h1>
+                                            <?php echo esc_html__( 'WPC Variation Swatches', 'wpc-variation-swatches' ) . ' ' . esc_html( WPCVS_VERSION ); ?>
+                                            <?php if ( defined( 'WPCVS_PREMIUM' ) ) : ?>
+                                                <span class="premium"><?php esc_html_e( 'Premium', 'wpc-variation-swatches' ); ?></span>
+                                            <?php endif; ?>
+                                        </h1>
+                                        <p class="wpcvs-tagline">
+                                            <?php esc_html_e( 'Beautiful color, image, radio and button swatches for your product attributes.', 'wpc-variation-swatches' ); ?>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="wpcvs-settings-status-badge">
+                                    <?php echo esc_html( $title_badge ); ?>
                                 </div>
                             </div>
                         </div>
-                        <h2></h2>
-                        <?php if ( isset( $_GET['settings-updated'] ) && sanitize_text_field( wp_unslash( $_GET['settings-updated'] ?? '' ) ) ) { ?>
-                            <div class="notice notice-success is-dismissible">
-                                <p><?php esc_html_e( 'Settings updated.', 'wpc-variation-swatches' ); ?></p>
-                            </div>
-                        <?php } ?>
-                        <div class="wpclever_settings_page_nav">
-                            <h2 class="nav-tab-wrapper">
+
+                        <div class="wpcvs-admin-nav">
+                            <div class="wpcvs-nav-container">
                                 <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcvs&tab=settings' ) ); ?>"
-                                   class="<?php echo esc_attr( $active_tab === 'settings' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
+                                   class="wpcvs-nav-item <?php echo $active_tab === 'settings' ? 'active' : ''; ?>">
                                     <?php esc_html_e( 'Settings', 'wpc-variation-swatches' ); ?>
                                 </a>
                                 <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-wpcvs&tab=localization' ) ); ?>"
-                                   class="<?php echo esc_attr( $active_tab === 'localization' ? 'nav-tab nav-tab-active' : 'nav-tab' ); ?>">
+                                   class="wpcvs-nav-item <?php echo $active_tab === 'localization' ? 'active' : ''; ?>">
                                     <?php esc_html_e( 'Localization', 'wpc-variation-swatches' ); ?>
                                 </a>
+                                <?php if ( defined( 'WPCVS_SUPPORT' ) ) : ?>
+                                    <a href="<?php echo esc_url( WPCVS_SUPPORT ); ?>" class="wpcvs-nav-item"
+                                       target="_blank">
+                                        <?php esc_html_e( 'Support', 'wpc-variation-swatches' ); ?>
+                                    </a>
+                                <?php endif; ?>
                                 <a href="<?php echo esc_url( admin_url( 'admin.php?page=wpclever-kit' ) ); ?>"
-                                   class="nav-tab">
+                                   class="wpcvs-nav-item">
                                     <?php esc_html_e( 'Essential Kit', 'wpc-variation-swatches' ); ?>
                                 </a>
-                            </h2>
+                            </div>
                         </div>
-                        <div class="wpclever_settings_page_content">
+
+                        <?php if ( isset( $_GET['settings-updated'] ) && sanitize_text_field( wp_unslash( $_GET['settings-updated'] ?? '' ) ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+                            <div class="notice notice-success is-dismissible">
+                                <p><?php esc_html_e( 'Settings updated.', 'wpc-variation-swatches' ); ?></p>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="wpcvs-settings-page-content">
                             <?php if ( $active_tab === 'settings' ) {
                                 $button_default     = self::get_setting( 'button_default', 'no' );
                                 $second_click       = self::get_setting( 'second_click', 'no' );
@@ -463,436 +481,411 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                 $single_replacement = self::get_setting( 'single_replacement', 'enable' );
                                 ?>
                                 <form method="post" action="options.php">
-                                    <table class="form-table">
-                                        <tr class="heading">
-                                            <th colspan="2">
-                                                <?php esc_html_e( 'General', 'wpc-variation-swatches' ); ?>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Button swatch by default', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[button_default]">
-                                                        <option value="yes" <?php selected( $button_default, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $button_default, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label> <span class="description">
-                                                    <?php esc_html_e( 'Turn the default type to button type.', 'wpc-variation-swatches' ); ?>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Enable second click to undo?', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[second_click]">
-                                                        <option value="yes" <?php selected( $second_click, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $second_click, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label> <span class="description">
-                                                    <?php esc_html_e( 'Enable/disable click again to undo the selection on current attribute.', 'wpc-variation-swatches' ); ?>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Tooltip library', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[tooltip_library]">
-                                                        <option value="hint" <?php selected( $tooltip_library, 'hint' ); ?>><?php esc_html_e( 'Hint.css', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="tippy" <?php selected( $tooltip_library, 'tippy' ); ?>><?php esc_html_e( 'Tippy.js', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="none" <?php selected( $tooltip_library, 'none' ); ?>><?php esc_html_e( 'None (Disable)', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description">Read more about <a
-                                                            href="https://kushagra.dev/lab/hint/" target="_blank">Hint.css</a> and <a
-                                                            href="https://atomiks.github.io/tippyjs/v6/getting-started/"
-                                                            target="_blank">Tippy.js</a>. Use Tippy.js if you want to show the attribute's name, description, image or color on the tooltip.</span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Tooltip position', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[tooltip_position]">
-                                                        <option value="top" <?php selected( $tooltip_position, 'top' ); ?>><?php esc_html_e( 'Top', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="right" <?php selected( $tooltip_position, 'right' ); ?>><?php esc_html_e( 'Right', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="bottom" <?php selected( $tooltip_position, 'bottom' ); ?>><?php esc_html_e( 'Bottom', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="left" <?php selected( $tooltip_position, 'left' ); ?>><?php esc_html_e( 'Left', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'For Hint.css only.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Style', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[style]">
-                                                        <option value="square" <?php selected( $style, 'square' ); ?>><?php esc_html_e( 'Square', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="rounded" <?php selected( $style, 'rounded' ); ?>><?php esc_html_e( 'Rounded', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Term groups', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[group]">
-                                                        <option value="yes" <?php selected( $group, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $group, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Enable/disable using group for attribute terms.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Select default attributes', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[default_attributes]">
-                                                        <option value="yes" <?php selected( $default_attributes, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $default_attributes, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Select default attributes automatically if they were not set.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Swatches for non-variable products', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[non_variable]">
-                                                        <option value="yes" <?php selected( $non_variable, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $non_variable, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Display visible attributes as swatches for non-variable products.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr class="heading">
-                                            <th colspan="2">
-                                                <?php esc_html_e( 'Single Product', 'wpc-variation-swatches' ); ?>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Layout', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[single_layout]">
-                                                        <option value="default" <?php selected( $single_layout, 'default' ); ?>><?php esc_html_e( 'Table (default)', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="stacked" <?php selected( $single_layout, 'stacked' ); ?>><?php esc_html_e( 'Stacked', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Choose the layout for swatches on the single product page.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Change URL', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[single_change_url]">
-                                                        <option value="yes" <?php selected( $single_change_url, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $single_change_url, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Change the URL on address bar when choosing attribute term.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Replacement', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[single_replacement]">
-                                                        <option value="enable" <?php selected( $single_replacement, 'enable' ); ?>><?php esc_html_e( 'Enable', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="disable" <?php selected( $single_replacement, 'disable' ); ?>><?php esc_html_e( 'Disable', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Enable it to replace the product name/price/description when choosing variations.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Selector', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <ul class="wpcvs-selectors">
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product wrapper selector. Default: %s', 'wpc-variation-swatches' ), '<code>.product.product-type-variable</code>' ); ?></label>
-                                                        <?php $single_product = apply_filters( 'wpcvs_single_product_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[single_product]"
-                                                                   value="<?php echo esc_attr( ! empty( $single_product ) ? $single_product : self::get_setting( 'single_product' ) ); ?>"
-                                                                    <?php echo( ! empty( $single_product ) ? 'readonly' : 'placeholder=".product.product-type-variable"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product name selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .product_title</code>' ); ?></label>
-                                                        <?php $single_name = apply_filters( 'wpcvs_single_name_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[single_name]"
-                                                                   value="<?php echo esc_attr( ! empty( $single_name ) ? $single_name : self::get_setting( 'single_name' ) ); ?>"
-                                                                    <?php echo( ! empty( $single_name ) ? 'readonly' : 'placeholder=".summary > .product_title"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product price selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .price</code>' ); ?></label>
-                                                        <?php $single_price = apply_filters( 'wpcvs_single_price_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[single_price]"
-                                                                   value="<?php echo esc_attr( ! empty( $single_price ) ? $single_price : self::get_setting( 'single_price' ) ); ?>"
-                                                                    <?php echo( ! empty( $single_price ) ? 'readonly' : 'placeholder=".summary > .price"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product short description selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .woocommerce-product-details__short-description</code>' ); ?></label>
-                                                        <?php $single_desc = apply_filters( 'wpcvs_single_desc_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[single_desc]"
-                                                                   value="<?php echo esc_attr( ! empty( $single_desc ) ? $single_desc : self::get_setting( 'single_desc' ) ); ?>"
-                                                                    <?php echo( ! empty( $single_desc ) ? 'readonly' : 'placeholder=".summary > .woocommerce-product-details__short-description"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                        <tr class="heading">
-                                            <th colspan="2">
-                                                <?php esc_html_e( 'Product Archive', 'wpc-variation-swatches' ); ?>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Enable', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[archive_enable]">
-                                                        <option value="yes" <?php selected( $archive_enable, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $archive_enable, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Enable swatches for product archive page.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Position', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[archive_position]">
-                                                        <option value="before" <?php selected( $archive_position, 'before' ); ?>><?php esc_html_e( 'Before add to cart button', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="after" <?php selected( $archive_position, 'after' ); ?>><?php esc_html_e( 'After add to cart button', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="none" <?php selected( $archive_position, 'none' ); ?>><?php esc_html_e( 'None', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label> <span class="description">
-                                                    <?php printf( /* translators: shortcode */ esc_html__( 'Swatches position on product archive page. You also can use the shortcode: %s', 'wpc-variation-swatches' ), '<code>[wpcvs_archive]</code>' ); ?>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Limit', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label>
-                                                    <input type="number" min="0" max="500"
-                                                           name="wpcvs_settings[archive_limit]"
-                                                           value="<?php echo esc_attr( $archive_limit ); ?>"/>
-                                                </label> <span class="description">
-													<?php esc_html_e( 'Maximum terms of each attribute will be shown on product archive page.', 'wpc-variation-swatches' ); ?>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Change link', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label> <select name="wpcvs_settings[archive_change_url]">
-                                                        <option value="yes" <?php selected( $archive_change_url, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
-                                                        <option value="no" <?php selected( $archive_change_url, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
-                                                    </select> </label>
-                                                <span class="description"><?php esc_html_e( 'Change the product link when choosing attribute term.', 'wpc-variation-swatches' ); ?></span>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Selector', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <ul class="wpcvs-selectors">
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product wrapper selector. Default: %s', 'wpc-variation-swatches' ), '<code>.product</code>' ); ?></label>
-                                                        <?php $archive_product = apply_filters( 'wpcvs_archive_product_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[archive_product]"
-                                                                   value="<?php echo esc_attr( ! empty( $archive_product ) ? $archive_product : self::get_setting( 'archive_product' ) ); ?>"
-                                                                    <?php echo( ! empty( $archive_product ) ? 'readonly' : 'placeholder=".product"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product link selector. Default: %s', 'wpc-variation-swatches' ), '<code>.woocommerce-loop-product__link, .woocommerce-loop-product__title a, a.add_to_cart_button</code>' ); ?></label>
-                                                        <?php $archive_link = apply_filters( 'wpcvs_archive_link_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[archive_link]"
-                                                                   value="<?php echo esc_attr( ! empty( $archive_link ) ? $archive_link : self::get_setting( 'archive_link' ) ); ?>"
-                                                                    <?php echo( ! empty( $archive_link ) ? 'readonly' : 'placeholder=".woocommerce-loop-product__link, .woocommerce-loop-product__title a, a.add_to_cart_button"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product image selector. Default: %s', 'wpc-variation-swatches' ), '<code>.attachment-woocommerce_thumbnail</code>' ); ?></label>
-                                                        <?php $archive_image = apply_filters( 'wpcvs_archive_image_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[archive_image]"
-                                                                   value="<?php echo esc_attr( ! empty( $archive_image ) ? $archive_image : self::get_setting( 'archive_image' ) ); ?>"
-                                                                    <?php echo( ! empty( $archive_image ) ? 'readonly' : 'placeholder=".attachment-woocommerce_thumbnail"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product name selector. Default: %s', 'wpc-variation-swatches' ), '<code>.woocommerce-loop-product__title</code>' ); ?></label>
-                                                        <?php $archive_name = apply_filters( 'wpcvs_archive_name_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[archive_name]"
-                                                                   value="<?php echo esc_attr( ! empty( $archive_name ) ? $archive_name : self::get_setting( 'archive_name' ) ); ?>"
-                                                                    <?php echo( ! empty( $archive_name ) ? 'readonly' : 'placeholder=".woocommerce-loop-product__title"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Product price selector. Default: %s', 'wpc-variation-swatches' ), '<code>.price</code>' ); ?></label>
-                                                        <?php $archive_price = apply_filters( 'wpcvs_archive_price_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[archive_price]"
-                                                                   value="<?php echo esc_attr( ! empty( $archive_price ) ? $archive_price : self::get_setting( 'archive_price' ) ); ?>"
-                                                                    <?php echo( ! empty( $archive_price ) ? 'readonly' : 'placeholder=".price"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Add to cart button selector. Default: %s', 'wpc-variation-swatches' ), '<code>.add_to_cart_button</code>' ); ?></label>
-                                                        <?php $archive_atc = apply_filters( 'wpcvs_archive_atc_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[archive_atc]"
-                                                                   value="<?php echo esc_attr( ! empty( $archive_atc ) ? $archive_atc : self::get_setting( 'archive_atc' ) ); ?>"
-                                                                    <?php echo( ! empty( $archive_atc ) ? 'readonly' : 'placeholder=".add_to_cart_button"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label><?php printf( /* translators: selector */ esc_html__( 'Add to cart button text selector. Default: %s', 'wpc-variation-swatches' ), '<code>.add_to_cart_button</code>' ); ?></label>
-                                                        <?php $archive_atc_text = apply_filters( 'wpcvs_archive_atc_text_selector', '' ); ?>
-                                                        <label>
-                                                            <input type="text" class="text large-text"
-                                                                   name="wpcvs_settings[archive_atc_text]"
-                                                                   value="<?php echo esc_attr( ! empty( $archive_atc_text ) ? $archive_atc_text : self::get_setting( 'archive_atc_text' ) ); ?>"
-                                                                    <?php echo( ! empty( $archive_atc_text ) ? 'readonly' : 'placeholder=".add_to_cart_button"' ); ?>/>
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                            </td>
-                                        </tr>
-                                        <tr class="submit">
-                                            <th colspan="2">
-                                                <div class="wpclever_submit">
-                                                    <?php
-                                                    settings_fields( 'wpcvs_settings' );
-                                                    submit_button( '', 'primary', 'submit', false );
+                                    <?php settings_fields( 'wpcvs_settings' ); ?>
+                                    <div class="wpcvs-card">
+                                        <h2 class="wpcvs-card-title"><?php esc_html_e( 'General', 'wpc-variation-swatches' ); ?></h2>
+                                        <p class="wpcvs-card-desc"><?php esc_html_e( 'General settings for swatches behavior and appearance.', 'wpc-variation-swatches' ); ?></p>
+                                        <table class="wpcvs-form-table">
+                                            <tr>
+                                                <th><?php esc_html_e( 'Button swatch by default', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[button_default]">
+                                                            <option value="yes" <?php selected( $button_default, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $button_default, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label> <span class="description">
+                                                        <?php esc_html_e( 'Turn the default type to button type.', 'wpc-variation-swatches' ); ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Enable second click to undo?', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[second_click]">
+                                                            <option value="yes" <?php selected( $second_click, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $second_click, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label> <span class="description">
+                                                        <?php esc_html_e( 'Enable/disable click again to undo the selection on current attribute.', 'wpc-variation-swatches' ); ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Tooltip library', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[tooltip_library]">
+                                                            <option value="hint" <?php selected( $tooltip_library, 'hint' ); ?>><?php esc_html_e( 'Hint.css', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="tippy" <?php selected( $tooltip_library, 'tippy' ); ?>><?php esc_html_e( 'Tippy.js', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="none" <?php selected( $tooltip_library, 'none' ); ?>><?php esc_html_e( 'None (Disable)', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description">Read more about <a
+                                                                href="https://kushagra.dev/lab/hint/" target="_blank">Hint.css</a> and <a
+                                                                href="https://atomiks.github.io/tippyjs/v6/getting-started/"
+                                                                target="_blank">Tippy.js</a>. Use Tippy.js if you want to show the attribute's name, description, image or color on the tooltip.</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Tooltip position', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[tooltip_position]">
+                                                            <option value="top" <?php selected( $tooltip_position, 'top' ); ?>><?php esc_html_e( 'Top', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="right" <?php selected( $tooltip_position, 'right' ); ?>><?php esc_html_e( 'Right', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="bottom" <?php selected( $tooltip_position, 'bottom' ); ?>><?php esc_html_e( 'Bottom', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="left" <?php selected( $tooltip_position, 'left' ); ?>><?php esc_html_e( 'Left', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'For Hint.css only.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Style', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[style]">
+                                                            <option value="square" <?php selected( $style, 'square' ); ?>><?php esc_html_e( 'Square', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="rounded" <?php selected( $style, 'rounded' ); ?>><?php esc_html_e( 'Rounded', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Term groups', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[group]">
+                                                            <option value="yes" <?php selected( $group, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $group, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Enable/disable using group for attribute terms.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Select default attributes', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[default_attributes]">
+                                                            <option value="yes" <?php selected( $default_attributes, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $default_attributes, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Select default attributes automatically if they were not set.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Swatches for non-variable products', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[non_variable]">
+                                                            <option value="yes" <?php selected( $non_variable, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $non_variable, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Display visible attributes as swatches for non-variable products.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="wpcvs-card">
+                                        <h2 class="wpcvs-card-title"><?php esc_html_e( 'Single Product', 'wpc-variation-swatches' ); ?></h2>
+                                        <p class="wpcvs-card-desc"><?php esc_html_e( 'Settings for swatches on the single product page.', 'wpc-variation-swatches' ); ?></p>
+                                        <table class="wpcvs-form-table">
+                                            <tr>
+                                                <th><?php esc_html_e( 'Layout', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[single_layout]">
+                                                            <option value="default" <?php selected( $single_layout, 'default' ); ?>><?php esc_html_e( 'Table (default)', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="stacked" <?php selected( $single_layout, 'stacked' ); ?>><?php esc_html_e( 'Stacked', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Choose the layout for swatches on the single product page.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Change URL', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[single_change_url]">
+                                                            <option value="yes" <?php selected( $single_change_url, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $single_change_url, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Change the URL on address bar when choosing attribute term.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Replacement', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[single_replacement]">
+                                                            <option value="enable" <?php selected( $single_replacement, 'enable' ); ?>><?php esc_html_e( 'Enable', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="disable" <?php selected( $single_replacement, 'disable' ); ?>><?php esc_html_e( 'Disable', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Enable it to replace the product name/price/description when choosing variations.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Selector', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <ul class="wpcvs-selectors">
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product wrapper selector. Default: %s', 'wpc-variation-swatches' ), '<code>.product.product-type-variable</code>' ); ?></label>
+                                                            <?php $single_product = apply_filters( 'wpcvs_single_product_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[single_product]"
+                                                                       value="<?php echo esc_attr( ! empty( $single_product ) ? $single_product : self::get_setting( 'single_product' ) ); ?>"
+                                                                        <?php echo( ! empty( $single_product ) ? 'readonly' : 'placeholder=".product.product-type-variable"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product name selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .product_title</code>' ); ?></label>
+                                                            <?php $single_name = apply_filters( 'wpcvs_single_name_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[single_name]"
+                                                                       value="<?php echo esc_attr( ! empty( $single_name ) ? $single_name : self::get_setting( 'single_name' ) ); ?>"
+                                                                        <?php echo( ! empty( $single_name ) ? 'readonly' : 'placeholder=".summary > .product_title"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product price selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .price</code>' ); ?></label>
+                                                            <?php $single_price = apply_filters( 'wpcvs_single_price_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[single_price]"
+                                                                       value="<?php echo esc_attr( ! empty( $single_price ) ? $single_price : self::get_setting( 'single_price' ) ); ?>"
+                                                                        <?php echo( ! empty( $single_price ) ? 'readonly' : 'placeholder=".summary > .price"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product short description selector. Default: %s', 'wpc-variation-swatches' ), '<code>.summary > .woocommerce-product-details__short-description</code>' ); ?></label>
+                                                            <?php $single_desc = apply_filters( 'wpcvs_single_desc_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[single_desc]"
+                                                                       value="<?php echo esc_attr( ! empty( $single_desc ) ? $single_desc : self::get_setting( 'single_desc' ) ); ?>"
+                                                                        <?php echo( ! empty( $single_desc ) ? 'readonly' : 'placeholder=".summary > .woocommerce-product-details__short-description"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="wpcvs-card">
+                                        <h2 class="wpcvs-card-title"><?php esc_html_e( 'Product Archive', 'wpc-variation-swatches' ); ?></h2>
+                                        <p class="wpcvs-card-desc"><?php esc_html_e( 'Settings for swatches on product archive pages.', 'wpc-variation-swatches' ); ?></p>
+                                        <table class="wpcvs-form-table">
+                                            <tr>
+                                                <th><?php esc_html_e( 'Enable', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[archive_enable]">
+                                                            <option value="yes" <?php selected( $archive_enable, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $archive_enable, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Enable swatches for product archive page.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Position', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[archive_position]">
+                                                            <option value="before" <?php selected( $archive_position, 'before' ); ?>><?php esc_html_e( 'Before add to cart button', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="after" <?php selected( $archive_position, 'after' ); ?>><?php esc_html_e( 'After add to cart button', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="none" <?php selected( $archive_position, 'none' ); ?>><?php esc_html_e( 'None', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label> <span class="description">
+                                                        <?php printf( /* translators: shortcode */ esc_html__( 'Swatches position on product archive page. You also can use the shortcode: %s', 'wpc-variation-swatches' ), '<code>[wpcvs_archive]</code>' ); ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Limit', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label>
+                                                        <input type="number" min="0" max="500"
+                                                               name="wpcvs_settings[archive_limit]"
+                                                               value="<?php echo esc_attr( $archive_limit ); ?>"/>
+                                                    </label> <span class="description">
+    													<?php esc_html_e( 'Maximum terms of each attribute will be shown on product archive page.', 'wpc-variation-swatches' ); ?>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Change link', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label> <select name="wpcvs_settings[archive_change_url]">
+                                                            <option value="yes" <?php selected( $archive_change_url, 'yes' ); ?>><?php esc_html_e( 'Yes', 'wpc-variation-swatches' ); ?></option>
+                                                            <option value="no" <?php selected( $archive_change_url, 'no' ); ?>><?php esc_html_e( 'No', 'wpc-variation-swatches' ); ?></option>
+                                                        </select> </label>
+                                                    <span class="description"><?php esc_html_e( 'Change the product link when choosing attribute term.', 'wpc-variation-swatches' ); ?></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Selector', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <ul class="wpcvs-selectors">
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product wrapper selector. Default: %s', 'wpc-variation-swatches' ), '<code>.product</code>' ); ?></label>
+                                                            <?php $archive_product = apply_filters( 'wpcvs_archive_product_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[archive_product]"
+                                                                       value="<?php echo esc_attr( ! empty( $archive_product ) ? $archive_product : self::get_setting( 'archive_product' ) ); ?>"
+                                                                        <?php echo( ! empty( $archive_product ) ? 'readonly' : 'placeholder=".product"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product link selector. Default: %s', 'wpc-variation-swatches' ), '<code>.woocommerce-loop-product__link, .woocommerce-loop-product__title a, a.add_to_cart_button</code>' ); ?></label>
+                                                            <?php $archive_link = apply_filters( 'wpcvs_archive_link_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[archive_link]"
+                                                                       value="<?php echo esc_attr( ! empty( $archive_link ) ? $archive_link : self::get_setting( 'archive_link' ) ); ?>"
+                                                                        <?php echo( ! empty( $archive_link ) ? 'readonly' : 'placeholder=".woocommerce-loop-product__link, .woocommerce-loop-product__title a, a.add_to_cart_button"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product image selector. Default: %s', 'wpc-variation-swatches' ), '<code>.attachment-woocommerce_thumbnail</code>' ); ?></label>
+                                                            <?php $archive_image = apply_filters( 'wpcvs_archive_image_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[archive_image]"
+                                                                       value="<?php echo esc_attr( ! empty( $archive_image ) ? $archive_image : self::get_setting( 'archive_image' ) ); ?>"
+                                                                        <?php echo( ! empty( $archive_image ) ? 'readonly' : 'placeholder=".attachment-woocommerce_thumbnail"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product name selector. Default: %s', 'wpc-variation-swatches' ), '<code>.woocommerce-loop-product__title</code>' ); ?></label>
+                                                            <?php $archive_name = apply_filters( 'wpcvs_archive_name_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[archive_name]"
+                                                                       value="<?php echo esc_attr( ! empty( $archive_name ) ? $archive_name : self::get_setting( 'archive_name' ) ); ?>"
+                                                                        <?php echo( ! empty( $archive_name ) ? 'readonly' : 'placeholder=".woocommerce-loop-product__title"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Product price selector. Default: %s', 'wpc-variation-swatches' ), '<code>.price</code>' ); ?></label>
+                                                            <?php $archive_price = apply_filters( 'wpcvs_archive_price_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[archive_price]"
+                                                                       value="<?php echo esc_attr( ! empty( $archive_price ) ? $archive_price : self::get_setting( 'archive_price' ) ); ?>"
+                                                                        <?php echo( ! empty( $archive_price ) ? 'readonly' : 'placeholder=".price"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Add to cart button selector. Default: %s', 'wpc-variation-swatches' ), '<code>.add_to_cart_button</code>' ); ?></label>
+                                                            <?php $archive_atc = apply_filters( 'wpcvs_archive_atc_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[archive_atc]"
+                                                                       value="<?php echo esc_attr( ! empty( $archive_atc ) ? $archive_atc : self::get_setting( 'archive_atc' ) ); ?>"
+                                                                        <?php echo( ! empty( $archive_atc ) ? 'readonly' : 'placeholder=".add_to_cart_button"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                        <li>
+                                                            <label><?php printf( /* translators: selector */ esc_html__( 'Add to cart button text selector. Default: %s', 'wpc-variation-swatches' ), '<code>.add_to_cart_button</code>' ); ?></label>
+                                                            <?php $archive_atc_text = apply_filters( 'wpcvs_archive_atc_text_selector', '' ); ?>
+                                                            <label>
+                                                                <input type="text" class="text large-text"
+                                                                       name="wpcvs_settings[archive_atc_text]"
+                                                                       value="<?php echo esc_attr( ! empty( $archive_atc_text ) ? $archive_atc_text : self::get_setting( 'archive_atc_text' ) ); ?>"
+                                                                        <?php echo( ! empty( $archive_atc_text ) ? 'readonly' : 'placeholder=".add_to_cart_button"' ); ?>/>
+                                                            </label>
+                                                        </li>
+                                                    </ul>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="wpcvs-submit-row">
+                                        <?php
+                                        submit_button( esc_html__( 'Save Changes', 'wpc-variation-swatches' ), 'primary', 'submit', false );
 
-                                                    if ( function_exists( 'wpc_last_saved' ) ) {
-                                                        wpc_last_saved( self::get_settings() );
-                                                    }
-                                                    ?>
-                                                </div>
-                                                <a style="display: none;" class="wpclever_export"
-                                                   data-key="wpcvs_settings"
-                                                   data-name="settings"
-                                                   href="#"><?php esc_html_e( 'import / export', 'wpc-variation-swatches' ); ?></a>
-                                            </th>
-                                        </tr>
-                                    </table>
+                                        if ( function_exists( 'wpc_last_saved' ) ) {
+                                            wpc_last_saved( self::get_settings() );
+                                        }
+                                        ?>
+                                        <a class="wpclever_export wpcvs-export-btn"
+                                           data-key="wpcvs_settings"
+                                           data-name="settings"
+                                           href="#"><span
+                                                    class="dashicons dashicons-database-export"></span> <?php esc_html_e( 'Import / Export', 'wpc-variation-swatches' ); ?>
+                                        </a>
+                                    </div>
                                 </form>
-                            <?php } elseif ( $active_tab === 'localization' ) { ?>
+                            <?php }  elseif ( $active_tab === 'localization' ) { ?>
                                 <form method="post" action="options.php">
-                                    <table class="form-table">
-                                        <tr class="heading">
-                                            <th scope="row"><?php esc_html_e( 'General', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <?php esc_html_e( 'Leave blank to use the default text and its equivalent translation in multiple languages.', 'wpc-variation-swatches' ); ?>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Add to cart', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label>
-                                                    <input type="text" class="regular-text"
-                                                           name="wpcvs_localization[add_to_cart]"
-                                                           value="<?php echo esc_attr( self::localization( 'add_to_cart' ) ); ?>"
-                                                           placeholder="<?php esc_attr_e( 'Add to cart', 'wpc-variation-swatches' ); ?>"/>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Select options', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label>
-                                                    <input type="text" class="regular-text"
-                                                           name="wpcvs_localization[select_options]"
-                                                           value="<?php echo esc_attr( self::localization( 'select_options' ) ); ?>"
-                                                           placeholder="<?php esc_attr_e( 'Select options', 'wpc-variation-swatches' ); ?>"/>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'View cart', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label>
-                                                    <input type="text" class="regular-text"
-                                                           name="wpcvs_localization[view_cart]"
-                                                           value="<?php echo esc_attr( self::localization( 'view_cart' ) ); ?>"
-                                                           placeholder="<?php esc_attr_e( 'View cart', 'wpc-variation-swatches' ); ?>"/>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'More', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label>
-                                                    <input type="text" class="regular-text"
-                                                           name="wpcvs_localization[more]"
-                                                           value="<?php echo esc_attr( self::localization( 'more' ) ); ?>"
-                                                           placeholder="<?php /* translators: count */
-                                                           esc_attr_e( '+%d More', 'wpc-variation-swatches' ); ?>"/>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Option none', 'wpc-variation-swatches' ); ?></th>
-                                            <td>
-                                                <label>
-                                                    <input type="text" class="regular-text"
-                                                           name="wpcvs_localization[option_none]"
-                                                           value="<?php echo esc_attr( self::localization( 'option_none' ) ); ?>"
-                                                           placeholder="<?php /* translators: attribute name */
-                                                           esc_attr_e( 'Choose %s', 'wpc-variation-swatches' ); ?>"/>
-                                                </label>
-                                            </td>
-                                        </tr>
-                                        <tr class="submit">
-                                            <th colspan="2">
-                                                <div class="wpclever_submit">
-                                                    <?php
-                                                    settings_fields( 'wpcvs_localization' );
-                                                    submit_button( '', 'primary', 'submit', false );
+                                    <?php settings_fields( 'wpcvs_localization' ); ?>
+                                    <div class="wpcvs-card wpcvs-card-localization">
+                                        <h2 class="wpcvs-card-title"><?php esc_html_e( 'Localization', 'wpc-variation-swatches' ); ?></h2>
+                                        <p class="wpcvs-card-desc"><?php esc_html_e( 'Leave blank to use the default text and its equivalent translation in multiple languages.', 'wpc-variation-swatches' ); ?></p>
+                                        <table class="wpcvs-form-table">
+                                            <tr>
+                                                <th><?php esc_html_e( 'Add to cart', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label>
+                                                        <input type="text" class="regular-text"
+                                                               name="wpcvs_localization[add_to_cart]"
+                                                               value="<?php echo esc_attr( self::localization( 'add_to_cart' ) ); ?>"
+                                                               placeholder="<?php esc_attr_e( 'Add to cart', 'wpc-variation-swatches' ); ?>"/>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Select options', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label>
+                                                        <input type="text" class="regular-text"
+                                                               name="wpcvs_localization[select_options]"
+                                                               value="<?php echo esc_attr( self::localization( 'select_options' ) ); ?>"
+                                                               placeholder="<?php esc_attr_e( 'Select options', 'wpc-variation-swatches' ); ?>"/>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'View cart', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label>
+                                                        <input type="text" class="regular-text"
+                                                               name="wpcvs_localization[view_cart]"
+                                                               value="<?php echo esc_attr( self::localization( 'view_cart' ) ); ?>"
+                                                               placeholder="<?php esc_attr_e( 'View cart', 'wpc-variation-swatches' ); ?>"/>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'More', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label>
+                                                        <input type="text" class="regular-text"
+                                                               name="wpcvs_localization[more]"
+                                                               value="<?php echo esc_attr( self::localization( 'more' ) ); ?>"
+                                                               placeholder="<?php /* translators: count */
+                                                               esc_attr_e( '+%d More', 'wpc-variation-swatches' ); ?>"/>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><?php esc_html_e( 'Option none', 'wpc-variation-swatches' ); ?></th>
+                                                <td>
+                                                    <label>
+                                                        <input type="text" class="regular-text"
+                                                               name="wpcvs_localization[option_none]"
+                                                               value="<?php echo esc_attr( self::localization( 'option_none' ) ); ?>"
+                                                               placeholder="<?php /* translators: attribute name */
+                                                               esc_attr_e( 'Choose %s', 'wpc-variation-swatches' ); ?>"/>
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="wpcvs-submit-row">
+                                        <?php
+                                        submit_button( esc_html__( 'Save Changes', 'wpc-variation-swatches' ), 'primary', 'submit', false );
 
-                                                    if ( function_exists( 'wpc_last_saved' ) ) {
-                                                        wpc_last_saved( get_option( 'wpcvs_localization', [] ) );
-                                                    }
-                                                    ?>
-                                                </div>
-                                                <a style="display: none;" class="wpclever_export"
-                                                   data-key="wpcvs_localization"
-                                                   data-name="settings"
-                                                   href="#"><?php esc_html_e( 'import / export', 'wpc-variation-swatches' ); ?></a>
-                                            </th>
-                                        </tr>
-                                    </table>
+                                        if ( function_exists( 'wpc_last_saved' ) ) {
+                                            wpc_last_saved( get_option( 'wpcvs_localization', [] ) );
+                                        }
+                                        ?>
+                                        <a class="wpclever_export wpcvs-export-btn"
+                                           data-key="wpcvs_localization"
+                                           data-name="settings"
+                                           href="#"><span
+                                                    class="dashicons dashicons-database-export"></span> <?php esc_html_e( 'Import / Export', 'wpc-variation-swatches' ); ?>
+                                        </a>
+                                    </div>
                                 </form>
                             <?php } ?>
-                        </div><!-- /.wpclever_settings_page_content -->
-                        <div class="wpclever_settings_page_suggestion">
-                            <div class="wpclever_settings_page_suggestion_label">
-                                <span class="dashicons dashicons-yes-alt"></span> Suggestion
-                            </div>
-                            <div class="wpclever_settings_page_suggestion_content">
-                                <div>
-                                    To display custom engaging real-time messages on any wished positions, please
-                                    install
-                                    <a href="https://wordpress.org/plugins/wpc-smart-messages/" target="_blank">WPC
-                                        Smart Messages</a> plugin. It's free!
-                                </div>
-                                <div>
-                                    Wanna save your precious time working on variations? Try our brand-new free plugin
-                                    <a href="https://wordpress.org/plugins/wpc-variation-bulk-editor/" target="_blank">WPC
-                                        Variation Bulk Editor</a> and
-                                    <a href="https://wordpress.org/plugins/wpc-variation-duplicator/" target="_blank">WPC
-                                        Variation Duplicator</a>.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        </div><!-- /.wpcvs-settings-page-content -->
+                    </div><!-- /.wpcvs-settings-wrap -->
                     <?php
                 }
 
