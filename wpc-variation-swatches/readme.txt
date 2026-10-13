@@ -3,7 +3,7 @@ Contributors: wpclever
 Donate link: https://wpclever.net
 Tags: woocommerce, wpc, variations, swatches, variation
 Tested up to: 7.1
-Stable tag: 4.4.0
+Stable tag: 4.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,7 @@ Visit our [live demo](https://demo.wpclever.net/wpcvs/ "live demo") here to see 
 - Automatically set button swatches as the default type for all custom attributes
 - Allow multiple selector types in a single product page at users’ preferences
 - Up to 5 types for individual attributes: select, radio, button, color, image
+- Quick edit color/image of terms directly in the terms list via AJAX modal
 - Two elegant styles for bordering: square or rounded
 - Show/hide or choose a position for the tooltips
 - Blur out for inactive variations
@@ -75,6 +76,9 @@ Note: Except for 2 default attributes by WooCommerce (size & color), all other c
 4. Go to WP-admin > Products > Attributes to configure for attributes and terms
 
 == Changelog ==
+
+= 4.5.0 =
+* Added: Edit color/image of terms directly in the Value column via AJAX modal
 
 = 4.4.0 =
 * Fixed: Minor CSS/JS issues in the backend

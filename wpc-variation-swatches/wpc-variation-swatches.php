@@ -8,7 +8,7 @@ Author URI: https://wpclever.net
 Text Domain: wpc-variation-swatches
 Domain Path: /languages/
 Requires Plugins: woocommerce
-Version: 4.4.0
+Version: 4.5.0
 Requires at least: 5.9
 WC requires at least: 3.0
 WC tested up to: 11.2
@@ -18,7 +18,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 defined( 'ABSPATH' ) || exit;
 
-! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.4.0' );
+! defined( 'WPCVS_VERSION' ) && define( 'WPCVS_VERSION', '4.5.0' );
 ! defined( 'WPCVS_LITE' ) && define( 'WPCVS_LITE', __FILE__ );
 ! defined( 'WPCVS_FILE' ) && define( 'WPCVS_FILE', __FILE__ );
 ! defined( 'WPCVS_URI' ) && define( 'WPCVS_URI', plugin_dir_url( __FILE__ ) );
@@ -98,6 +98,10 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                                 'term_custom_columns_content'
                         ], 10, 3 );
                     }
+
+                    // inline edit term value (color/image) via AJAX
+                    add_action( 'admin_footer', [ $this, 'term_value_modal' ] );
+                    add_action( 'wp_ajax_wpcvs_save_term_value', [ $this, 'ajax_save_term_value' ] );
 
                     add_filter( 'woocommerce_post_class', [ $this, 'post_class' ], 99 );
                     add_filter( 'woocommerce_dropdown_variation_attribute_options_html', [
@@ -364,7 +368,20 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                             'selectWoo',
                     ], WPCVS_VERSION, true );
                     wp_localize_script( 'wpcvs-backend', 'wpcvs_vars', [
-                            'placeholder_img' => wc_placeholder_img_src()
+                            'placeholder_img' => wc_placeholder_img_src(),
+                            'ajax_url'        => admin_url( 'admin-ajax.php' ),
+                            'nonce'           => wp_create_nonce( 'wpcvs-admin-security' ),
+                            'i18n'            => [
+                                    /* translators: term name */
+                                    'edit_color'   => esc_html__( 'Edit color: %s', 'wpc-variation-swatches' ),
+                                    /* translators: term name */
+                                    'edit_image'   => esc_html__( 'Edit image: %s', 'wpc-variation-swatches' ),
+                                    'choose_image' => esc_html__( 'Choose an image', 'wpc-variation-swatches' ),
+                                    'use_image'    => esc_html__( 'Use image', 'wpc-variation-swatches' ),
+                                    'saving'       => esc_html__( 'Saving...', 'wpc-variation-swatches' ),
+                                    'save'         => esc_html__( 'Save', 'wpc-variation-swatches' ),
+                                    'error'        => esc_html__( 'Something went wrong. Please try again.', 'wpc-variation-swatches' ),
+                            ],
                     ] );
                 }
 
@@ -1639,28 +1656,132 @@ if ( ! function_exists( 'wpcvs_init' ) ) {
                         $attr_id = wc_attribute_taxonomy_id_by_name( $term->taxonomy );
                         $attr    = wc_get_attribute( $attr_id );
 
-                        switch ( $attr->type ) {
-                            case 'image':
-                                $val = get_term_meta( $term_id, 'wpcvs_image', true );
-                                echo '<img style="display: inline-block; border-radius: 3px; width: 40px; height: 40px; background-color: #eee; box-sizing: border-box; border: 1px solid #eee;" src="' . esc_url( $val ? wp_get_attachment_thumb_url( $val ) : wc_placeholder_img_src() ) . '"/>';
-
-                                break;
-                            case 'color':
-                                $val = get_term_meta( $term_id, 'wpcvs_color', true );
-                                echo '<span style="display: inline-block; border-radius: 3px; width: 40px; height: 40px; background-color: ' . esc_attr( $val ) . '; box-sizing: border-box; border: 1px solid #eee;"></span>';
-
-                                break;
-                            case 'button':
-                                $val = get_term_meta( $term_id, 'wpcvs_button', true );
-                                echo '<span style="display: inline-block; border-radius: 3px; height: 40px; line-height: 40px; padding: 0 15px; border: 1px solid #eee; background-color: #fff; min-width: 44px; box-sizing: border-box;">' . esc_html( $val ) . '</span>';
-
-                                break;
-                        }
+                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- all dynamic values are escaped inside get_term_value_html()
+                        echo self::get_term_value_html( $term_id, $attr->type ?? '' );
                     }
 
                     if ( $column === 'wpcvs_tooltip' ) {
                         echo esc_html( get_term_meta( $term_id, 'wpcvs_tooltip', true ) );
                     }
+                }
+
+                public static function get_term_value_html( $term_id, $type ) {
+                    $term      = get_term( $term_id );
+                    $term_name = ( $term && ! is_wp_error( $term ) ) ? $term->name : '';
+                    $title     = esc_attr__( 'Click to edit', 'wpc-variation-swatches' );
+
+                    switch ( $type ) {
+                        case 'image':
+                            $val = get_term_meta( $term_id, 'wpcvs_image', true );
+                            $src = $val ? wp_get_attachment_thumb_url( $val ) : '';
+
+                            if ( ! $src ) {
+                                $src = wc_placeholder_img_src();
+                            }
+
+                            return '<a href="#" class="wpcvs-term-value wpcvs-term-value--image" title="' . $title . '" data-type="image" data-term-id="' . esc_attr( $term_id ) . '" data-term-name="' . esc_attr( $term_name ) . '" data-value="' . esc_attr( $val ) . '" data-src="' . esc_url( $src ) . '"><span class="wpcvs-swatch wpcvs-swatch--image"><img src="' . esc_url( $src ) . '" alt="' . esc_attr( $term_name ) . '"/></span></a>';
+                        case 'color':
+                            $val = get_term_meta( $term_id, 'wpcvs_color', true );
+
+                            return '<a href="#" class="wpcvs-term-value wpcvs-term-value--color" title="' . $title . '" data-type="color" data-term-id="' . esc_attr( $term_id ) . '" data-term-name="' . esc_attr( $term_name ) . '" data-value="' . esc_attr( $val ) . '"><span class="wpcvs-swatch wpcvs-swatch--color" data-color="' . esc_attr( $val ) . '"></span></a>';
+                        case 'button':
+                            $val = get_term_meta( $term_id, 'wpcvs_button', true );
+
+                            return '<span class="wpcvs-swatch wpcvs-swatch--button">' . esc_html( $val ) . '</span>';
+                        default:
+                            return '';
+                    }
+                }
+
+                function term_value_modal() {
+                    $screen = get_current_screen();
+
+                    if ( ! $screen || $screen->base !== 'edit-tags' || strpos( (string) $screen->taxonomy, 'pa_' ) !== 0 ) {
+                        return;
+                    }
+
+                    $attr = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $screen->taxonomy ) );
+
+                    if ( ! $attr || ! in_array( $attr->type, [ 'color', 'image' ], true ) ) {
+                        return;
+                    }
+
+                    wp_enqueue_media();
+                    ?>
+                    <div id="wpcvs-value-modal" class="wpcvs-modal" data-type="<?php echo esc_attr( $attr->type ); ?>" hidden>
+                        <div class="wpcvs-modal-backdrop" data-wpcvs-close></div>
+                        <div class="wpcvs-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="wpcvs-modal-title">
+                            <div class="wpcvs-modal-header">
+                                <h2 id="wpcvs-modal-title" class="wpcvs-modal-title"></h2>
+                                <button type="button" class="wpcvs-modal-close" data-wpcvs-close aria-label="<?php esc_attr_e( 'Close', 'wpc-variation-swatches' ); ?>">&times;</button>
+                            </div>
+                            <div class="wpcvs-modal-body">
+                                <div class="wpcvs-modal-field wpcvs-modal-field--color" hidden>
+                                    <div id="wpcvs-modal-color-wrap" class="wpcvs-modal-color-wrap"></div>
+                                </div>
+                                <div class="wpcvs-modal-field wpcvs-modal-field--image" hidden>
+                                    <div class="wpcvs-modal-image-preview">
+                                        <img id="wpcvs-modal-image-preview" src="" alt=""/>
+                                    </div>
+                                    <div class="wpcvs-modal-image-actions">
+                                        <input type="hidden" id="wpcvs-modal-image-id" value=""/>
+                                        <button type="button" id="wpcvs-modal-upload-image" class="button"><?php esc_html_e( 'Choose image', 'wpc-variation-swatches' ); ?></button>
+                                        <button type="button" id="wpcvs-modal-remove-image" class="button"><?php esc_html_e( 'Remove image', 'wpc-variation-swatches' ); ?></button>
+                                    </div>
+                                </div>
+                                <p id="wpcvs-modal-error" class="wpcvs-modal-error" role="alert" hidden></p>
+                            </div>
+                            <div class="wpcvs-modal-footer">
+                                <button type="button" class="button" data-wpcvs-close><?php esc_html_e( 'Cancel', 'wpc-variation-swatches' ); ?></button>
+                                <button type="button" id="wpcvs-modal-save" class="button button-primary"><?php esc_html_e( 'Save', 'wpc-variation-swatches' ); ?></button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php
+                }
+
+                function ajax_save_term_value() {
+                    check_ajax_referer( 'wpcvs-admin-security', 'nonce' );
+
+                    $term_id = absint( wp_unslash( $_POST['term_id'] ?? 0 ) );
+                    $term    = $term_id ? get_term( $term_id ) : null;
+
+                    if ( ! $term || is_wp_error( $term ) || strpos( $term->taxonomy, 'pa_' ) !== 0 ) {
+                        wp_send_json_error( [ 'message' => esc_html__( 'Invalid term.', 'wpc-variation-swatches' ) ] );
+                    }
+
+                    if ( ! current_user_can( 'edit_term', $term_id ) ) {
+                        wp_send_json_error( [ 'message' => esc_html__( 'You are not allowed to edit this term.', 'wpc-variation-swatches' ) ], 403 );
+                    }
+
+                    // the type always comes from the attribute, never from the request
+                    $attr = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $term->taxonomy ) );
+                    $type = $attr->type ?? '';
+
+                    switch ( $type ) {
+                        case 'color':
+                            $color = sanitize_text_field( wp_unslash( $_POST['value'] ?? '' ) );
+
+                            if ( $color !== '' && ! preg_match( '/^[#a-zA-Z0-9(),.%\s]+$/', $color ) ) {
+                                wp_send_json_error( [ 'message' => esc_html__( 'Invalid color.', 'wpc-variation-swatches' ) ] );
+                            }
+
+                            update_term_meta( $term_id, 'wpcvs_color', $color );
+                            break;
+                        case 'image':
+                            $image_id = absint( wp_unslash( $_POST['value'] ?? 0 ) );
+
+                            if ( $image_id && ! wp_attachment_is_image( $image_id ) ) {
+                                wp_send_json_error( [ 'message' => esc_html__( 'Invalid image.', 'wpc-variation-swatches' ) ] );
+                            }
+
+                            update_term_meta( $term_id, 'wpcvs_image', $image_id ?: '' );
+                            break;
+                        default:
+                            wp_send_json_error( [ 'message' => esc_html__( 'This attribute type is not editable.', 'wpc-variation-swatches' ) ] );
+                    }
+
+                    wp_send_json_success( [ 'html' => self::get_term_value_html( $term_id, $type ) ] );
                 }
 
                 function archive( $product_id = null, $hide = '', $link = false ) {
